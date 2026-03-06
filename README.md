@@ -7,11 +7,14 @@ This is the backend and core structure for our movie review platform.
 To get this project running on your local XAMPP/WAMP server, follow these steps:
 
 ### 1. Install Dependencies
-We do not track the `vendor/` folder. You must install the PHP libraries manually:
+This project uses **Guzzle HTTP Client** for API requests to TMDb. The `vendor/` folder is git-ignored, so you must install it and other dependencies locally:
 
 ```bash
+# If you are starting fresh or Guzzle isn't in composer.json yet:
+composer require guzzlehttp/guzzle
+
+# If the composer.json is already updated:
 composer install
-```
 
 ### 2. Database Initialization
 Run the following query on phpMyAdmin:
