@@ -2,28 +2,42 @@
 
 This is the backend and core structure for our movie review platform.
 
+---
+
+## 🛠 Tech Stack
+* **Language:** PHP 8.x
+* **HTTP Client:** Guzzle (for TMDb API integration)
+* **Database:** MySQL / MariaDB (XAMPP/WAMP)
+* **Dependency Manager:** Composer
+* **Build Config:** `settings.gradle.kts`
+
+---
+
 ## 🚀 Setup Instructions for Phelippe
 
-To get this project running on your local XAMPP/WAMP server, follow these steps:
+Follow these steps to get the project running on your local server:
 
 ### 1. Install Dependencies
-This project uses **Guzzle HTTP Client** for API requests to TMDb. The `vendor/` folder is git-ignored, so you must install it and other dependencies locally:
+This project uses **Guzzle HTTP Client** to fetch data from the TMDb API. Since the `vendor/` folder is git-ignored, you must initialize the dependencies:
 
 ```bash
-# If you are starting fresh or Guzzle isn't in composer.json yet:
-composer require guzzlehttp/guzzle
-
-# If the composer.json is already updated:
+# To install all dependencies from the composer.json file:
 composer install
 
+# Note: If Guzzle is not yet in the project, run:
+# composer require guzzlehttp/guzzle
+```
+
 ### 2. Database Initialization
-Run the following query on phpMyAdmin:
+Open **phpMyAdmin**, create a database named `MovieReviewDB`, and run the following script in the SQL tab:
+
+
 
 ```sql
 CREATE DATABASE IF NOT EXISTS MovieReviewDB;
 USE MovieReviewDB;
 
--- Users Table
+-- 1. Users Table
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -32,7 +46,7 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Movies Table (Caching TMDb data)
+-- 2. Movies Table (Caching TMDb data)
 CREATE TABLE movies (
     id INT PRIMARY KEY, -- We use the TMDb ID here
     title VARCHAR(255) NOT NULL,
@@ -40,7 +54,7 @@ CREATE TABLE movies (
     release_date DATE
 );
 
--- Reviews Table
+-- 3. Reviews Table
 CREATE TABLE reviews (
     user_id INT NOT NULL,
     movie_id INT NOT NULL,
@@ -51,7 +65,7 @@ CREATE TABLE reviews (
     FOREIGN KEY (movie_id) REFERENCES movies(id) ON DELETE CASCADE
 );
 
--- Favorites Table
+-- 4. Favorites Table
 CREATE TABLE favorites (
     user_id INT NOT NULL,
     movie_id INT NOT NULL,
@@ -61,4 +75,18 @@ CREATE TABLE favorites (
 );
 ```
 
+### 3. API Configuration
+You will need a TMDb API key to fetch movie details.
+1. Sign up/Login at [The Movie Database](https://www.themoviedb.org/).
+2. Create an API Key in your account settings.
+3. Add the key to your `.env` file (do not commit this file to GitHub).
+
 ---
+
+## 📌 Project Notes
+* **Caching:** We store movie details in the local `movies` table to minimize API calls.
+* **Security:** Always use `password_hash()` and `password_verify()` for user authentication.
+
+## 👥 Contributors
+* **Rafael Cadena**
+* **Phelippe**
