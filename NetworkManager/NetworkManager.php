@@ -23,7 +23,7 @@ class NetworkManager
         $this->client = new \GuzzleHttp\Client();
     }
 
-    public static function getInstance(): NetworkManager
+    public static function get_instance(): NetworkManager
     {
         if (self::$instance === null) {
             self::$instance = new NetworkManager();
@@ -32,7 +32,7 @@ class NetworkManager
         return self::$instance;
     }
 
-    public function getTrendingMovies()
+    public function get_trending_movies()
     {
 
         $movies = [];
