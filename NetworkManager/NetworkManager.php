@@ -1,32 +1,68 @@
 <?php
 
 declare(strict_types=1);
+
+// Load Composer's autoloader
 require_once(__DIR__ . '/../vendor/autoload.php');
+
+// Load environment variables from the .env file
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
 
-class NetworkManager {
+class NetworkManager
+{
 
+    private static $instance = null;
     private $apiKey;
+    private $client;
 
-    public function __construct()
+    private function __construct()
     {
-        // $apiKey = 'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI0NTU3NzkxYmZkYTZjMDBjYzdlZDdhYzI3YzAxZDNjMiIsIm5iZiI6MTc3MTk5NjQ3MC40Miwic3ViIjoiNjk5ZTg1MzZhMjk4OTVmYTAzZjIyOWJmIiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.J3Ycks23if9YvPPW3U4IMyHbvADdUF1-USvQkESJV1A';
         $this->apiKey = $_ENV['API_KEY'];
+        $this->client = new \GuzzleHttp\Client();
     }
-    
-    public function getTrendingMovies() {
-        
-        $client = new \GuzzleHttp\Client();
 
-        $response = $client->request('GET', 'https://api.themoviedb.org/3/trending/movie/day?language=en-US', [
-        'headers' => [
-            'Authorization' => 'Bearer ' . $this->apiKey,
-            'accept' => 'application/json',
-        ],
-        ]);
+    public static function getInstance(): NetworkManager
+    {
+        if (self::$instance === null) {
+            self::$instance = new NetworkManager();
+        }
 
-        echo $response->getBody();
+        return self::$instance;
+    }
+
+    public function getTrendingMovies()
+    {
+
+        $movies = [];
+
+        // Fetch trending movies from the first 5 pages
+        for ($i = 1; $i <= 5; $i++) {
+            $response = $this->client->request('GET', "https://api.themoviedb.org/3/trending/movie/day?language=en-US&page=$i", [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->apiKey,
+                    'accept' => 'application/json',
+                ],
+            ]);
+
+            // Check if the response status code is 200 (OK)
+            if ($response->getStatusCode() !== 200) {
+                throw new Exception("Failed to fetch trending movies: " . $response->getStatusCode());
+            }
+
+            // Decode the JSON response into an associative array
+            $data = json_decode($response->getBody()->getContents(), true);
+
+            // Check if the 'results' key exists in the response data
+            if (!isset($data['results'])) {
+                throw new Exception("Invalid response from API");
+            }
+
+            // Merge the movies from the current page into the main movies array
+            $movies = array_merge($movies, $data['results']);
+        }
+
+        return $movies;
     }
 }
