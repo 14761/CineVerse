@@ -9,7 +9,6 @@ This is the backend and core structure for our movie review platform.
 * **HTTP Client:** Guzzle (for TMDb API integration)
 * **Database:** MySQL / MariaDB (XAMPP/WAMP)
 * **Dependency Manager:** Composer
-* **Build Config:** `settings.gradle.kts`
 
 ---
 
