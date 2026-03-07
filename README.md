@@ -64,8 +64,8 @@ CREATE TABLE reviews (
     FOREIGN KEY (movie_id) REFERENCES movies(id) ON DELETE CASCADE
 );
 
--- 4. Favorites Table
-CREATE TABLE favorites (
+-- 4. Favourites Table
+CREATE TABLE favourites (
     user_id INT NOT NULL,
     movie_id INT NOT NULL,
     PRIMARY KEY (user_id, movie_id),
