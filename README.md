@@ -9,7 +9,6 @@ This is the backend and core structure for our movie review platform.
 * **HTTP Client:** Guzzle (for TMDb API integration)
 * **Database:** MySQL / MariaDB (XAMPP/WAMP)
 * **Dependency Manager:** Composer
-* **Build Config:** `settings.gradle.kts`
 
 ---
 
@@ -48,8 +47,9 @@ CREATE TABLE users (
 
 -- 2. Movies Table (Caching TMDb data)
 CREATE TABLE movies (
-    id INT PRIMARY KEY, -- We use the TMDb ID here
-    title VARCHAR(255) NOT NULL,
+    id INT PRIMARY KEY,
+    title VARCHAR(255),           
+    overview TEXT, 
     poster_path VARCHAR(255),
     release_date DATE
 );
@@ -58,15 +58,15 @@ CREATE TABLE movies (
 CREATE TABLE reviews (
     user_id INT NOT NULL,
     movie_id INT NOT NULL,
-    rating DECIMAL(2,1) DEFAULT 0.0 CHECK (rating >= 0.0 AND rating <= 5.0),
+    rating DECIMAL(2,1) DEFAULT NULL CHECK (rating >= 0.0 AND rating <= 5.0),
     comment TEXT,
     PRIMARY KEY (user_id, movie_id),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (movie_id) REFERENCES movies(id) ON DELETE CASCADE
 );
 
--- 4. Favorites Table
-CREATE TABLE favorites (
+-- 4. Favourites Table
+CREATE TABLE favourites (
     user_id INT NOT NULL,
     movie_id INT NOT NULL,
     PRIMARY KEY (user_id, movie_id),
