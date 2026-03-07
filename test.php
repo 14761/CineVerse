@@ -1,3 +1,10 @@
+<?php
+    session_start();
+    // Include the necessary files for NetworkManager and MovieCard
+    require_once __DIR__ . '/Models/NetworkManager.php';
+    require_once __DIR__ . '/Views/MovieCard.php';
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -12,13 +19,11 @@
 
 <body>
 
+    <!-- Container that contains the movie cards. In this case this is for the trending movies. -->
     <div class="container-fuid">
         <h1 class="text-center my-4">Trending Movies</h1>
         <div class="d-flex flex-wrap justify-content-center gap-4">
-            <?php
-            // Include the necessary files for NetworkManager and MovieCard
-            require_once __DIR__ . '/NetworkManager/NetworkManager.php';
-            require_once __DIR__ . '/BootstrapElements/MovieCard.php';
+            <?php            
 
             // Get the singleton instance of NetworkManager and fetch trending movies
             $networkManager = NetworkManager::get_instance();
