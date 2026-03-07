@@ -47,8 +47,9 @@ CREATE TABLE users (
 
 -- 2. Movies Table (Caching TMDb data)
 CREATE TABLE movies (
-    id INT PRIMARY KEY, -- We use the TMDb ID here
-    title VARCHAR(255) NOT NULL,
+    id INT PRIMARY KEY,
+    title VARCHAR(255),           
+    overview TEXT, 
     poster_path VARCHAR(255),
     release_date DATE
 );
@@ -57,7 +58,7 @@ CREATE TABLE movies (
 CREATE TABLE reviews (
     user_id INT NOT NULL,
     movie_id INT NOT NULL,
-    rating DECIMAL(2,1) DEFAULT 0.0 CHECK (rating >= 0.0 AND rating <= 5.0),
+    rating DECIMAL(2,1) DEFAULT NULL CHECK (rating >= 0.0 AND rating <= 5.0),
     comment TEXT,
     PRIMARY KEY (user_id, movie_id),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
