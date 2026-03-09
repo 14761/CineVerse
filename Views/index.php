@@ -115,6 +115,9 @@ require_once __DIR__ . '/../Views/MovieCard.php';
         </div>
     </div>
 
+    <a href="movie-details.php?id=inception">Movie 1</a>
+    <a href="movie-details.php?id=interstellar">Movie 2</a>
+
     <!-- If user already logged in do not show this section -->
     <div class="join-community">
         <h2>

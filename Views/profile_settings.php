@@ -1,6 +1,9 @@
+<!-- Generic page to populate with film details from API -->
+
 <?php
 session_start();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -51,51 +54,52 @@ session_start();
         </div>
     </nav>
 
-    <div class="browse-movie-title">
-        <h2>
-            Browse Movies
-        </h2>
+    <div class="page-title">
+        Profile Settings
     </div>
-
-    <div class="filters">
-        <div class="select-wrap">
-            <select class="custom-select">
-                <option>All Genres</option>
-                <option>Action</option>
-                <option>Sci-Fi</option>
-                <option>Mystery</option>
-                <option>Romance</option>
-                <option>Horror</option>
-                <option>Comedy</option>
-                <option>Fantasy</option>
-                <option>Thriller</option>
-                <option>Adventure</option>
-                <option>War</option>
-            </select>
-            <span class="select-icon">
-                <i class="bi bi-chevron-down"></i>
+    <div class="profile-settings-container">
+        <div class="profile_settings_left_container">
+            <span>
+                Profile Picture
             </span>
+            <div class="profile-settings-avatar">
+                <img src="../Views/images/profile_sample.jpg" alt="Profile Picture">
+            </div>
         </div>
 
-        <div class="select-wrap">
-            <select class="custom-select">
-                <option>Highest Rated</option>
-                <option>Most Popular</option>
-                <option>Newest</option>
-                <option>Oldest</option>
-            </select>
-            <span class="select-icon">
-                <i class="bi bi-chevron-down"></i>
+        <div class="profile_settings_right_container">
+            <span>
+                Personal Information
             </span>
+            <form action="../Controllers/profile_settings_controller.php" method="post">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control" id="username" name="username"
+                        value="<?php echo $_SESSION['username']; ?>">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" id="email" name="email"
+                        value="<?php echo $_SESSION['email']; ?>">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" name="password"
+                        placeholder="New password">
+                </div>
+                <button type="submit" class="btn btn-primary">Update</button>
+            </form>
         </div>
     </div>
 
-    <div class="movie-image">
-        <img src="../Views/images/img_sample_movie_cover.jpeg" alt="Movie Poster">
+    <div class="delete_account_container">
+        <span>
+            Delete Account
+        </span>
+        <span class="settings_subtitle">If you delete your account, you will lose all your data.</span>
+        <button class="btn btn-danger">Delete Account</button>
     </div>
-    <h2 class="movie-title">
-        <a href="../Views/movie-details.php?id=starwars">Movie Name</a>
-    </h2>
+
 
     <div class="join-community">
         <h2>
@@ -109,6 +113,7 @@ session_start();
         <p>© 2026 CineVerse. All rights reserved.</p>
         <p>Your personal movie and TV show discovery platform</p>
     </div>
+
 
     <script src="../helpers/script.js"></script>
 </body>

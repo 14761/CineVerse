@@ -1,6 +1,48 @@
+<!-- Generic page to populate with film details from API -->
+
 <?php
 session_start();
+
+// Array just for ID test
+$movies = [
+    "inception" => [
+        "title" => "Inception",
+        "overview" => "A thief who steals corporate secrets through dream-sharing technology.",
+        "poster_path" => "/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg",
+        "rating" => 8.8,
+        "genre" => "Action",
+        "released" => "12/2/2000",
+        "duration" => "120m",
+    ],
+    "interstellar" => [
+        "title" => "Interstellar",
+        "overview" => "A team travels through a wormhole in space to ensure humanity's survival.",
+        "poster_path" => "/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
+        "rating" => 8.6,
+        "genre" => "Fiction",
+        "released" => "12/2/2002",
+        "duration" => "140m",
+    ],
+    "starwars" => [
+        "title" => "Star Wars",
+        "overview" => "A team travels through a wormhole in space to ensure humanity's survival.",
+        "poster_path" => "/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
+        "rating" => 8.6,
+        "genre" => "Fiction",
+        "released" => "12/2/2002",
+        "duration" => "140m",
+    ],
+];
+
+$id = $_GET['id'] ?? null;
+
+if (!$id || !isset($movies[$id])) {
+    die("Movie not found.");
+}
+
+$movie = $movies[$id];
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -58,7 +100,7 @@ session_start();
                     <img src="../Views/images/img_sample_movie_cover.jpeg" alt="Movie Poster">
                 </div>
                 <h2 class="movie-title">
-                    Movie Name
+                    <!-- Movie Name --> <?php echo htmlspecialchars($movie['title']); ?>
                 </h2>
             </div>
             <iframe width="560" height="315" src="https://www.youtube.com/embed/sGbxmsDFVnE?si=DsykfgKOIDjSUBys"
@@ -68,19 +110,42 @@ session_start();
         </div>
         <div class="movie-info">
             <div class="movie-genre">
-                <p>Genre</p>
+                <span>
+                    <!-- Genre --> <?php echo htmlspecialchars($movie['genre']); ?>
+                </span>
             </div>
             <div class="movie-release-date">
-                <p>Release Date</p>
+                <span>
+                    <!-- Release Date --> <?php echo htmlspecialchars($movie['released']); ?>
+                </span>
             </div>
             <div class="movie-duration">
-                <p>Duration</p>
+                <span>
+                    <!-- Duration --> <?php echo htmlspecialchars($movie['duration']); ?>
+                </span>
             </div>
         </div>
         <div class="movie-rating">
-            <p>Rating</p>
+            <span>Rating</span>
         </div>
     </div>
+
+    <div class="movie-description">
+        <span>
+            Description
+        </span>
+    </div>
+
+    <div class="comments-section">
+        <span>
+            Comments
+        </span>
+        <div class="comments-container">
+            <input type="text" placeholder="Join the conversation and share your thoughts.">
+            <button class="btn btn-primary">Post</button>
+        </div>
+    </div>
+
 
 
     <div class="join-community">
