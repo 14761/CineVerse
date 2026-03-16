@@ -1,7 +1,8 @@
 /* 
-   Global Custom Stylesheet for Movie Hub 
-   Overrides and additions to Bootstrap classes for a premium dark mode aesthetic 
+   Custom style sheet overrides and additions to Bootstrap 
 */
+
+/* Variables */
 :root {
     --primary-color: #38bdf8;
     --secondary-color: #818cf8;
