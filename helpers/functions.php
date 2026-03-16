@@ -13,3 +13,10 @@
 function e($value): string {
     return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
 }
+
+// A helper function to generate the full URL for a movie poster image
+// This function takes the image path and an optional size parameter (default is 'w342')
+function get_image_url($path, $size = 'w342'): string {
+    return "https://image.tmdb.org/t/p/$size" . e($path);
+}
+

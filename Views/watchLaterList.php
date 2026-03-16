@@ -7,7 +7,7 @@ session_start();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Movies - CineVerse</title>
+    <title>Watch Later - CineVerse</title>
 
     <!-- Google Fonts for Modern Aesthetic -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -30,42 +30,10 @@ session_start();
 
     <div class="browse-movie-title">
         <h2>
-            Browse Movies
+            Watch Later
         </h2>
     </div>
 
-    <div class="filters">
-        <div class="select-wrap">
-            <select class="custom-select">
-                <option>All Genres</option>
-                <option>Action</option>
-                <option>Sci-Fi</option>
-                <option>Mystery</option>
-                <option>Romance</option>
-                <option>Horror</option>
-                <option>Comedy</option>
-                <option>Fantasy</option>
-                <option>Thriller</option>
-                <option>Adventure</option>
-                <option>War</option>
-            </select>
-            <span class="select-icon">
-                <i class="bi bi-chevron-down"></i>
-            </span>
-        </div>
-
-        <div class="select-wrap">
-            <select class="custom-select">
-                <option>Highest Rated</option>
-                <option>Most Popular</option>
-                <option>Newest</option>
-                <option>Oldest</option>
-            </select>
-            <span class="select-icon">
-                <i class="bi bi-chevron-down"></i>
-            </span>
-        </div>
-    </div>
 
     <div class="movie-image">
         <img src="../Views/images/img_sample_movie_cover.jpeg" alt="Movie Poster">
@@ -76,7 +44,7 @@ session_start();
 
     <?php
     require_once 'footer.php';
-    renderLoggedOutFooter();
+    renderLoggedInFooter();
     ?>
 
     <script src="../helpers/script.js"></script>

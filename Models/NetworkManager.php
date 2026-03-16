@@ -16,11 +16,16 @@ class NetworkManager
     private static $instance = null;
     private $apiKey;
     private $client;
+    private $genreList = [];
 
     private function __construct()
     {
         $this->apiKey = $_ENV['API_KEY'];
         $this->client = new \GuzzleHttp\Client();
+
+        // Fetch genres and populate the genre list
+        $this->fetch_genres();
+
     }
 
     public static function get_instance(): NetworkManager
@@ -32,14 +37,142 @@ class NetworkManager
         return self::$instance;
     }
 
-    public function get_trending_movies()
+    // A helper function to map genre IDs to genre names for a list of movies
+    private function map_genres_to_movies(array $movies): array {
+        foreach ($movies as &$movie) {
+            if (isset($movie['genre_ids']) && is_array($movie['genre_ids'])) {
+                $movie['genres'] = array_map(function ($genreId) {
+                    return $this->genreList[$genreId] ?? 'Unknown';
+                }, $movie['genre_ids']);
+            } else {
+                $movie['genres'] = ['Unknown'];
+            }
+        }
+
+        return $movies;
+    }
+
+    // Fetch the movie list of genres and store it in the genreList property
+    private function fetch_genres() {
+        $response = $this->client->request('GET', 'https://api.themoviedb.org/3/genre/movie/list?language=en', [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $this->apiKey,
+                'accept' => 'application/json',
+            ],
+        ]);
+
+        // Check if the response status code is 200 (OK)
+        if ($response->getStatusCode() !== 200) {
+            throw new Exception("Failed to fetch trending movies: " . $response->getStatusCode());
+        }
+
+        // Decode the JSON response into an associative array
+        $data = json_decode($response->getBody()->getContents(), true);
+
+        // Check if the 'genres' key exists in the response data
+        if (!isset($data['genres'])) {
+            throw new Exception("Invalid response from API");
+        }
+
+        foreach ($data['genres'] as $genre) {
+            $this->genreList[$genre['id']] = $genre['name'];
+        }
+    }
+
+    // Get movies by search keyword
+    public function search_movies(string $keyword): array
+    {
+        $movies = [];
+
+        while (true) {
+            
+            $movie_filter = [];
+
+            $i = 1;
+            $response = $this->client->request('GET', "https://api.themoviedb.org/3/search/multi?query=$keyword&include_adult=false&language=en-US&page=$i", [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->apiKey,
+                    'accept' => 'application/json',
+                ],
+            ]);
+
+            // Check if the response status code is 200 (OK)
+            if ($response->getStatusCode() !== 200) {
+                throw new Exception("Failed to fetch movies: " . $response->getStatusCode());
+            }
+
+            // Decode the JSON response into an associative array
+            $data = json_decode($response->getBody()->getContents(), true);
+
+            // Check if the 'results' key exists in the response data
+            if (!isset($data['results'])) {
+                throw new Exception("Invalid response from API");
+            }
+
+            // Filter the results to include only movies 
+            foreach ($data['results'] as $movie) {
+                // Check if the media type is 'movie' and add it to the movie filter array
+                if (isset($movie['media_type']) && $movie['media_type'] === 'movie') {
+                    $movie_filter[] = $movie;
+                }
+                // If the media type is 'person', we can also check their known movies and add those to the movie filter array
+                elseif (isset($movie['media_type']) && $movie['media_type'] === 'person') {
+                    foreach ($movie['known_for'] as $known_movie) {
+                        if (isset($known_movie['media_type']) && $known_movie['media_type'] === 'movie') {
+                            $movie_filter[] = $known_movie;
+                        }
+                    }
+                }
+            }
+
+            // Merge the movies from the current page into the main movies array
+            $movies = array_merge($movies, $movie_filter);
+
+            // Check if there are more pages to fetch based on the total_pages value in the response data
+            // If there are more pages and we haven't reached the limit of 50 movies, increment the page number and continue fetching
+            if ($data['total_pages'] > $i && count($movies) < 50) {
+                $i++;
+            } else {
+                break;
+            }
+        }
+
+        return $this->map_genres_to_movies($movies);
+    }
+
+    public function get_movie_details(int $movie_id): array {
+
+        $response = $this->client->request('GET', "https://api.themoviedb.org/3/movie/$movie_id?language=en-US", [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $this->apiKey,
+                'accept' => 'application/json',
+            ],
+        ]);
+
+        // Check if the response status code is 200 (OK)
+        if ($response->getStatusCode() !== 200) {
+            throw new Exception("Failed to fetch movie details: " . $response->getStatusCode());
+        }
+
+        // Decode the JSON response into an associative array
+        $data = json_decode($response->getBody()->getContents(), true);
+
+        // Check if the 'results' key exists in the response data
+        if (!isset($data['results'])) {
+            throw new Exception("Invalid response from API");
+        }
+
+        return $this->map_genres_to_movies([$data])[0];
+    }
+
+    public function get_trending_movies(): array
     {
 
         $movies = [];
 
         // Fetch trending movies from the first 5 pages
         for ($i = 1; $i <= 5; $i++) {
-            $response = $this->client->request('GET', "https://api.themoviedb.org/3/trending/movie/day?language=en-US&page=$i", [
+            $response = $this->client->request('GET', "https://api.themoviedb.org/3/movie/popular?language=en-US&page=$i", [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $this->apiKey,
                     'accept' => 'application/json',
@@ -63,6 +196,9 @@ class NetworkManager
             $movies = array_merge($movies, $data['results']);
         }
 
-        return $movies;
+        return $this->map_genres_to_movies($movies);
     }
+
+    
 }
+

@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once __DIR__ . '/../Views/MovieCard.php';
+require_once __DIR__ . '/../Models/NetworkManager.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -23,41 +24,17 @@ require_once __DIR__ . '/../Views/MovieCard.php';
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary bg-navbar">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">CineVerse</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a href="../Views/index.php" class="nav-link active" aria-current="page" href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="../Views/movies.php" class="nav-link" href="#">Movies</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="../Views/shows.php" class="nav-link" href="#">TV Shows</a>
-                    </li>
-                </ul>
-                <form class="d-flex" role="search">
-                    <input class="form-control me-2 search" type="search" placeholder="Search" aria-label="Search" />
-                </form>
-                <a href="../Views/login.php" class="bt-login">Login</a>
-                <a href="../Views/register.php" class="btn-primary">Register</a>
+    <!-- Navbar -->
+    <?php
+    require_once 'navbar.php';
 
-            </div>
-        </div>
-    </nav>
+    renderNavbar();
+    ?>
 
+    <!-- Trending Movies -->
     <div class="trending-movies">
-        <h2 class="trending-title">
-            <i class="bi bi-graph-up-arrow"></i>Trending Movies
-        </h2>
 
+        <!-- Carousel -->
         <div id="carouselExample" class="carousel slide index-carousel-container">
             <div class="carousel-inner">
                 <div class="carousel-item active">
@@ -79,81 +56,40 @@ require_once __DIR__ . '/../Views/MovieCard.php';
                 <span class="visually-hidden">Next</span>
             </button>
         </div>
-        <div class="row">
-            <?php
 
-            $movies = [
-                [
-                    "title" => "Inception",
-                    "overview" => "A thief who steals corporate secrets through dream-sharing technology.",
-                    "poster_path" => "/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg",
-                    "vote_average" => 8.8
-                ],
-                [
-                    "title" => "Interstellar",
-                    "overview" => "A team travels through a wormhole in space in an attempt to ensure humanity's survival.",
-                    "poster_path" => "/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
-                    "vote_average" => 8.6
-                ]
-            ];
-
-            foreach ($movies as $movie) {
-                echo_movie_card($movie);
-            }
-
-            ?>
-        </div>
-    </div>
-
-    <div class="trending-shows">
         <h2 class="trending-title">
-            <i class="bi bi-graph-up-arrow"></i>Trending Shows
+            <i class="bi bi-graph-up-arrow"></i>Trending Movies
         </h2>
-        <div class="row">
-            <?php
 
-            $movies = [
-                [
-                    "title" => "Inception",
-                    "overview" => "A thief who steals corporate secrets through dream-sharing technology.",
-                    "poster_path" => "/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg",
-                    "vote_average" => 8.8
-                ],
-                [
-                    "title" => "Interstellar",
-                    "overview" => "A team travels through a wormhole in space in an attempt to ensure humanity's survival.",
-                    "poster_path" => "/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg",
-                    "vote_average" => 8.6
-                ]
-            ];
+        <!-- Movie Cards -->
+        <div class="container text-center">
+            <div class="row">
+                <div class="d-flex flex-wrap justify-content-center gap-4">
+                    <?php
 
-            foreach ($movies as $movie) {
-                echo_movie_card($movie);
-            }
+                    // Get the singleton instance of NetworkManager and fetch trending movies
+                    $networkManager = NetworkManager::get_instance();
+                    $movies = $networkManager->get_trending_movies();
 
-            ?>
+                    // Display the movie card for the top 10 movies
+                    for ($x = 0; $x < 10; $x++) {
+                        movie_banner($movies[$x]);
+                    }
+
+                    ?>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <a href="movie-details.php?id=inception">Movie 1</a>
-    <a href="movie-details.php?id=interstellar">Movie 2</a>
 
-    <!-- If user already logged in do not show this section -->
-    <div class="join-community">
-        <h2>
-            Join Our Community
-        </h2>
-        <p>Create your account to rate movies, leave comments, and build your personalized watchlist.</p>
-        <a href="../Views/register.php" class="btn-primary">Register</a>
-    </div>
+        <!-- If user is logged out show this section -->
+        <?php
+        require_once __DIR__ . '/footer.php';
+        renderLoggedOutFooter();
+        ?>
 
-    <div class="footer">
-        <p>© 2026 CineVerse. All rights reserved.</p>
-        <p>Your personal movie and TV show discovery platform</p>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../helpers/script.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="../helpers/script.js"></script>
 </body>
 
 </html>
