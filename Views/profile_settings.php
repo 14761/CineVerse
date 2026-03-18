@@ -80,7 +80,7 @@ session_start();
 
     <?php
     require_once 'footer.php';
-    renderLoggedInFooter();
+    renderFooter();
     ?>
 
     <script src="../helpers/script.js"></script>

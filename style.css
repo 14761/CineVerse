@@ -384,6 +384,15 @@ a {
 }
 
 .movie-info {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    border: 1px solid rgba(129, 140, 248, 0.3);
+    color: #929dfe;
+    font-size: 0.85rem;
+    background: rgba(129, 140, 248, 0.08);
+}
+
+.movie-info-container {
     display: flex;
     flex-direction: row;
     gap: 0.8rem;
@@ -415,17 +424,27 @@ a {
     }
 }
 
-.movie-genre,
-.movie-release-date,
-.movie-duration {
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    border: 1px solid rgba(129, 140, 248, 0.3);
-    color: #929dfe;
-    font-size: 0.85rem;
-    background: rgba(129, 140, 248, 0.08);
+.rating-container {
+    display: flex;
+    flex-direction: row;
+    gap: 0.8rem;
+    margin-top: 1rem;
+
 }
 
+.rating-tmdb {
+    padding: 0.25rem 0.75rem;
+    color: var(--text-color);
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.rating-user {
+    padding: 0.25rem 0.75rem;
+    color: var(--text-color);
+    font-size: 1rem;
+    font-weight: 500;
+}
 
 .browse-movie-title {
     color: var(--text-color);

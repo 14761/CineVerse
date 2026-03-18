@@ -76,7 +76,7 @@ session_start();
 
     <?php
     require_once 'footer.php';
-    renderLoggedOutFooter();
+    renderFooter();
     ?>
 
     <script src="../helpers/script.js"></script>

@@ -34,17 +34,21 @@ session_start();
         </h2>
     </div>
 
-
-    <div class="movie-image">
-        <img src="../Views/images/img_sample_movie_cover.jpeg" alt="Movie Poster">
-    </div>
-    <h2 class="movie-title">
-        <a href="../Views/movie-details.php?id=starwars">Movie Name</a>
-    </h2>
+    <?php
+    if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
+        echo '<h3> 
+                Your watch later list here
+            </h3>';
+    } else {
+        echo '<h3> 
+                Please login or register to view your watch later list
+            </h3>';
+    }
+    ?>
 
     <?php
     require_once 'footer.php';
-    renderLoggedInFooter();
+    renderFooter();
     ?>
 
     <script src="../helpers/script.js"></script>

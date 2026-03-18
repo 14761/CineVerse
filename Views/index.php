@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 require_once __DIR__ . '/../Views/MovieCard.php';
 require_once __DIR__ . '/../Models/NetworkManager.php';
 ?>
@@ -85,7 +86,7 @@ require_once __DIR__ . '/../Models/NetworkManager.php';
         <!-- If user is logged out show this section -->
         <?php
         require_once __DIR__ . '/footer.php';
-        renderLoggedOutFooter();
+        renderFooter();
         ?>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

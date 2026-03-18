@@ -4,15 +4,17 @@
 session_start();
 require_once __DIR__ . '/../Views/MovieCard.php';
 require_once __DIR__ . '/../Models/NetworkManager.php';
+require_once __DIR__ . '/../Models/DBManager.php';
+
 
 $id = $_GET['id'] ?? null;
 $networkManager = NetworkManager::get_instance();
 $movies = $networkManager->get_trending_movies();
+$movie_detail = $networkManager->get_movie_details((int) $id);
 
-// if (!$id || !isset($movies[$id])) {
-//     die("Movie not found.");
-// }
-
+if (!$id) {
+    die("Movie ID not provided.");
+}
 ?>
 
 <!DOCTYPE html>
@@ -46,26 +48,40 @@ $movies = $networkManager->get_trending_movies();
         <div class="movie-header">
             <div class="movie-header-content">
                 <div class="movie-image">
-                    <img src="../Views/images/img_sample_movie_cover.jpeg" alt="Movie Poster">
+                    <?php movie_banner($movie_detail); ?>
                 </div>
                 <div class="movie-details-section">
                     <h2 class="movie-title">
-                        <!-- Movie Name --> <?php echo movie_title($movies[0]); ?>
+                        <?php echo $movie_detail['title']; ?>
                     </h2>
                     <div class="movie-description">
                         <span>
-                            <?php echo movie_description($movies[0]); ?>
+                            <?php echo $movie_detail['overview']; ?>
                         </span>
                     </div>
                 </div>
             </div>
 
         </div>
-        <div class="movie-info">
-            <!-- Genre --> <?php echo movie_genre($movies[0]); ?>
-            <!-- Release Date --> <?php echo movie_release_date($movies[0]); ?>
-            <!-- Duration --> <?php echo movie_duration($movies[0]); ?>
-            <!-- Rating --> <?php echo movie_rating($movies[0]); ?>
+        <div class="movie-info-container">
+            <div class="movie-info">
+                <!-- Genre <?php echo $movie_detail['genres']; ?> -->
+                <?php echo implode(', ', $movie_detail['genres']); ?>
+            </div>
+            <div class="movie-info">
+                <!-- Release Date --> <?php echo $movie_detail['release_date']; ?>
+            </div>
+            <div class="movie-info">
+                <!-- Duration --> <?php echo $movie_detail['runtime'] . " m"; ?>
+            </div>
+        </div>
+        <div class="rating-container">
+            <div class="rating-tmdb">
+                <!-- Rating --> <?php echo "TMDB: " . $movie_detail['vote_average'] . "/10 ⭐️"; ?>
+            </div>
+            <div class="rating-user">
+                <!-- Rating --> <?php echo "CineVerse Rating: " . $movie_detail['vote_average'] . "/10 ⭐️"; ?>
+            </div>
         </div>
     </div>
 

@@ -38,7 +38,8 @@ class NetworkManager
     }
 
     // A helper function to map genre IDs to genre names for a list of movies
-    private function map_genres_to_movies(array $movies): array {
+    private function map_genres_to_movies(array $movies): array
+    {
         foreach ($movies as &$movie) {
             if (isset($movie['genre_ids']) && is_array($movie['genre_ids'])) {
                 $movie['genres'] = array_map(function ($genreId) {
@@ -53,7 +54,8 @@ class NetworkManager
     }
 
     // Fetch the movie list of genres and store it in the genreList property
-    private function fetch_genres() {
+    private function fetch_genres()
+    {
         $response = $this->client->request('GET', 'https://api.themoviedb.org/3/genre/movie/list?language=en', [
             'headers' => [
                 'Authorization' => 'Bearer ' . $this->apiKey,
@@ -85,7 +87,7 @@ class NetworkManager
         $movies = [];
 
         while (true) {
-            
+
             $movie_filter = [];
 
             $i = 1;
@@ -140,8 +142,9 @@ class NetworkManager
         return $this->map_genres_to_movies($movies);
     }
 
-    public function get_movie_details(int $movie_id): array {
-
+    // Get the details of a specific movie
+    public function get_movie_details(int $movie_id): array
+    {
         $response = $this->client->request('GET', "https://api.themoviedb.org/3/movie/$movie_id?language=en-US", [
             'headers' => [
                 'Authorization' => 'Bearer ' . $this->apiKey,
@@ -149,21 +152,28 @@ class NetworkManager
             ],
         ]);
 
-        // Check if the response status code is 200 (OK)
         if ($response->getStatusCode() !== 200) {
             throw new Exception("Failed to fetch movie details: " . $response->getStatusCode());
         }
 
-        // Decode the JSON response into an associative array
         $data = json_decode($response->getBody()->getContents(), true);
 
-        // Check if the 'results' key exists in the response data
-        if (!isset($data['results'])) {
-            throw new Exception("Invalid response from API");
-        }
+        // Extract genre names directly
+        $data['genres'] = array_column($data['genres'], 'name');
 
-        return $this->map_genres_to_movies([$data])[0];
+        return $data;
     }
+
+    // Map the genres to the movie
+    // private function map_genres_to_movie(array $movie): array
+    // {
+    //     if (isset($movie['genre_ids'])) {
+    //         $movie['genres'] = array_map(fn($id) => $this->genreList[$id] ?? 'Unknown', $movie['genre_ids']);
+    //     } elseif (isset($movie['genres'])) {
+    //         $movie['genres'] = array_column($movie['genres'], 'name');
+    //     }
+    //     return $movie;
+    // }
 
     public function get_trending_movies(): array
     {
@@ -199,6 +209,6 @@ class NetworkManager
         return $this->map_genres_to_movies($movies);
     }
 
-    
+
 }
 

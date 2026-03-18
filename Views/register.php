@@ -18,6 +18,12 @@ session_start();
 
 
     <link rel="stylesheet" href="../style.css">
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
+    <script src="../helpers/firebaseScript.js"></script>
+
 </head>
 
 <body>
@@ -36,9 +42,9 @@ session_start();
 
             <form action="../Controllers/UserController.php?action=register" method="POST">
                 <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
+                    <label for="username" class="form-label">Full Name</label>
                     <input type="text" class="form-control" id="username" name="username"
-                        placeholder="Choose a username" required>
+                        placeholder="Enter your username" required>
                 </div>
 
                 <div class="mb-3">
@@ -71,7 +77,7 @@ session_start();
 
     <?php
     require_once 'footer.php';
-    renderLoggedOutFooter();
+    renderFooter();
     ?>
 
     <script src="../helpers/script.js"></script>

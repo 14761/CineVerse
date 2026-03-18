@@ -7,7 +7,7 @@ session_start();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Movie Hub</title>
+    <title>Login - CineVerse</title>
 
     <!-- Google Fonts for Modern Aesthetic -->
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -34,6 +34,24 @@ session_start();
                 <h1 class="auth-title">Welcome</h1>
                 <p class="auth-subtitle">Log in to track your favourite movies</p>
             </div>
+
+            <?php if (isset($_SESSION['error'])): ?>
+                <div class="alert alert-danger">
+                    <?php
+                    echo $_SESSION['error'];
+                    unset($_SESSION['error']);
+                    ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if (isset($_SESSION['success'])): ?>
+                <div class="alert alert-success">
+                    <?php
+                    echo $_SESSION['success'];
+                    unset($_SESSION['success']);
+                    ?>
+                </div>
+            <?php endif; ?>
 
             <form action="../Controllers/UserController.php?action=login" method="POST">
                 <div class="mb-4">
@@ -62,10 +80,9 @@ session_start();
 
     <?php
     require_once 'footer.php';
-    renderLoggedOutFooter();
+    renderFooter();
     ?>
 
-    <script src="../helpers/script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
