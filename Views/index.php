@@ -22,6 +22,12 @@ require_once __DIR__ . '/../Models/NetworkManager.php';
 
     <link rel="stylesheet" href="../style.css">
 
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="CineVerse">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="apple-touch-icon" href="../images/favicon.png">
+    <link rel="icon" href="../images/favicon.png" type="image/png">
 </head>
 
 <body>
@@ -82,8 +88,7 @@ require_once __DIR__ . '/../Models/NetworkManager.php';
             </div>
         </div>
 
-
-        <!-- If user is logged out show this section -->
+        <!-- Footer -->
         <?php
         require_once __DIR__ . '/footer.php';
         renderFooter();

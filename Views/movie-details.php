@@ -97,7 +97,7 @@ if (!$id) {
 
     <?php
     require_once 'footer.php';
-    renderLoggedInFooter();
+    renderFooter();
     ?>
 
 

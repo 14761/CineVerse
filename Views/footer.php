@@ -12,25 +12,29 @@ function renderFooter()
 
     if ($isLoggedIn) {
         echo '
+        <div class="footer_watch_later">
     <div class="footer">
         <p>© 2026 CineVerse. All rights reserved.</p>
         <p>Your personal movie and TV show discovery platform</p>
+    </div>
     </div>';
 
     } else {
         echo '
-    <div class="join-community">
-        <h2>
-            Join Our Community
-        </h2>
-        <p>Create your account to rate movies, leave comments, and build your personalized watchlist.</p>
-        <a href="../Views/register.php" class="btn-primary">Register</a>
-    </div> 
+        <div class="footer_watch_later">
+            <div class="join-community">
+                <h2>
+                    Join Our Community
+                </h2>
+                <p>Create your account to rate movies, leave comments, and build your personalized watchlist.</p>
+                <a href="../Views/register.php" class="btn-primary">Register</a>
+            </div> 
     
-    <div class="footer">
-        <p>© 2026 CineVerse. All rights reserved.</p>
-        <p>Your personal movie and TV show discovery platform</p>
-    </div>';
+            <div class="footer">
+                <p>© 2026 CineVerse. All rights reserved.</p>
+                <p>Your personal movie and TV show discovery platform</p>
+            </div>
+        </div>';
     }
 }
 
