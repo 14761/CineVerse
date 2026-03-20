@@ -1,5 +1,8 @@
 <?php
 session_start();
+
+require_once __DIR__ . '/../Views/MovieCard.php';
+require_once __DIR__ . '/../Models/NetworkManager.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -67,12 +70,26 @@ session_start();
         </div>
     </div>
 
-    <div class="movie-image">
-        <img src="../Views/images/img_sample_movie_cover.jpeg" alt="Movie Poster">
+    <div class="container text-center">
+        <div class="row justify-content-center g-4">
+            <?php
+
+            // Get the singleton instance of NetworkManager and fetch trending movies
+            $networkManager = NetworkManager::get_instance();
+            $movies = $networkManager->get_trending_movies();
+
+            // Display the movie card for the top 10 movies
+            foreach ($movies as $movie) {
+                if ($movie != null) {
+                    echo '<div class="col-6 col-sm-4 col-md-3 col-lg-2">';
+                    movie_banner($movie);
+                    echo '</div>';
+                }
+            }
+
+            ?>
+        </div>
     </div>
-    <h2 class="movie-title">
-        <a href="../Views/movie-details.php?id=starwars">Movie Name</a>
-    </h2>
 
     <?php
     require_once 'footer.php';

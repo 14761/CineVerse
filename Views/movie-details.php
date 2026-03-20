@@ -15,6 +15,13 @@ $movie_detail = $networkManager->get_movie_details((int) $id);
 if (!$id) {
     die("Movie ID not provided.");
 }
+
+$dbManager = DBManager::get_instance();
+
+$isFavourite = false;
+if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
+    $isFavourite = $dbManager->is_favourite((int) $_SESSION['user_id'], (int) $movie_detail['id']);
+}
 ?>
 
 <!DOCTYPE html>
@@ -51,9 +58,11 @@ if (!$id) {
                     <?php movie_banner($movie_detail); ?>
                 </div>
                 <div class="movie-details-section">
-                    <h2 class="movie-title">
-                        <?php echo $movie_detail['title']; ?>
-                    </h2>
+                    <div class="movie-title-fav">
+                        <h2 class="movie-title">
+                            <?php echo $movie_detail['title']; ?>
+                        </h2>
+                    </div>
                     <div class="movie-description">
                         <span>
                             <?php echo $movie_detail['overview']; ?>
@@ -75,12 +84,24 @@ if (!$id) {
                 <!-- Duration --> <?php echo $movie_detail['runtime'] . " m"; ?>
             </div>
         </div>
+        <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true): ?>
+            <button id="favouriteBtn" class="fav-btn <?php echo $isFavourite ? 'active' : ''; ?>"
+                data-movie-id="<?php echo (int) $movie_detail['id']; ?>">
+                <span class="fav-icon"><?php echo $isFavourite ? '♥' : '♡'; ?></span>
+                <span class="fav-text"><?php echo $isFavourite ? 'Remove from favourites' : 'Add to favourites'; ?></span>
+            </button>
+        <?php else: ?>
+            <a href="../Views/login.php" class="fav-btn">
+                <span class="fav-icon">♡</span>
+                <span class="fav-text">Log in to favourite</span>
+            </a>
+        <?php endif; ?>
         <div class="rating-container">
             <div class="rating-tmdb">
                 <!-- Rating --> <?php echo "TMDB: " . $movie_detail['vote_average'] . "/10 ⭐️"; ?>
             </div>
             <div class="rating-user">
-                <!-- Rating --> <?php echo "CineVerse Rating: " . $movie_detail['vote_average'] . "/10 ⭐️"; ?>
+                <!-- Rating --> <?php echo "CineVerse: " . $movie_detail['vote_average'] . "/10 ⭐️"; ?>
             </div>
         </div>
     </div>

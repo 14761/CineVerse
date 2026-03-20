@@ -35,7 +35,7 @@ function renderNavbar()
                     </li>
 
                     <li class="nav-item">
-                        <a href="../Views/watchLaterList.php" class="nav-link">Watch Later</a>
+                        <a href="../Views/watchLaterList.php" class="nav-link">Favourites</a>
                     </li>
 
                 </ul>
