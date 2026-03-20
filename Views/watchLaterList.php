@@ -1,5 +1,9 @@
 <?php
 session_start();
+
+require_once __DIR__ . '/../Views/MovieCard.php';
+require_once __DIR__ . '/../Models/NetworkManager.php';
+require_once __DIR__ . '/../Models/DBManager.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -30,21 +34,34 @@ session_start();
 
     <div class="browse-movie-title">
         <h2>
-            Watch Later
+            Favourites
         </h2>
     </div>
 
     <?php
-    if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
-        echo '<h3> 
-                Your watch later list here
-            </h3>';
-    } else {
-        echo '<h3> 
-                Please login or register to view your watch later list
-            </h3>';
+    if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+        echo '<h3>Please login or register to view your watch later list</h3>';
+        return;
+    }
+
+    $dbManager = DBManager::get_instance();
+    $movies = $dbManager->get_favourite_movies($_SESSION['user_id']);
+
+    if (empty($movies) || !is_array($movies)) {
+        echo '<p>No movies available at the moment.</p>';
+        return;
     }
     ?>
+
+    <div class="container text-center">
+        <div class="row justify-content-center g-4">
+            <?php foreach ($movies as $movie): ?>
+                <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                    <?php movie_banner($movie); ?>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
 
     <?php
     require_once 'footer.php';

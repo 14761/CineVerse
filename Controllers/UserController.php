@@ -18,6 +18,9 @@ switch ($action) {
     case 'logout':
         logout_user();
         break;
+    case 'toggleFavourite':
+        toggle_favourite();
+        break;
     default:
         die('Invalid action.');
 }
@@ -135,6 +138,76 @@ function logout_user(): void
 {
     $_SESSION = [];
     session_destroy();
-    header('Location: ../Views/login.php');
+    header('Location: ../Views/index.php');
     exit;
+}
+
+// Method to toggle favourite
+function toggle_favourite(): void
+{
+    header('Content-Type: application/json');
+
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        http_response_code(405);
+        echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
+        exit;
+    }
+
+    if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+        http_response_code(401);
+        echo json_encode(['success' => false, 'message' => 'Please log in first.']);
+        exit;
+    }
+
+    $userId = (int) ($_SESSION['user_id'] ?? 0);
+    $movieId = (int) ($_POST['movie_id'] ?? 0);
+
+    if ($userId <= 0 || $movieId <= 0) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'message' => 'Invalid user or movie ID.']);
+        exit;
+    }
+
+    try {
+        $dbManager = DBManager::get_instance();
+
+        if ($dbManager->is_favourite($userId, $movieId)) {
+            $removed = $dbManager->remove_from_favourites($userId, $movieId);
+
+            echo json_encode([
+                'success' => $removed,
+                'isFavourite' => false,
+                'message' => $removed ? 'Removed from favourites.' : 'Could not remove favourite.'
+            ]);
+            exit;
+        }
+
+        // Ensure movie exists in local DB first
+        $movie = $dbManager->get_movie_by_id($movieId);
+
+        if (!$movie) {
+            require_once __DIR__ . '/../Models/NetworkManager.php';
+            $networkManager = NetworkManager::get_instance();
+            $movieDetails = $networkManager->get_movie_details($movieId);
+
+            $dbManager->add_movie_to_DB($movieDetails);
+        }
+
+        $added = $dbManager->add_to_favourites($userId, $movieId);
+
+        echo json_encode([
+            'success' => $added,
+            'isFavourite' => true,
+            'message' => $added ? 'Added to favourites.' : 'Could not add favourite.'
+        ]);
+        exit;
+
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo json_encode([
+            'success' => false,
+            'message' => $e->getMessage()
+        ]);
+        exit;
+    }
 }

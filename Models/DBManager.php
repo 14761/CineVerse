@@ -22,12 +22,12 @@ class DBManager
     }
 
     // Prevent cloning of the singleton instance
-    private function __clone()
+    public function __clone()
     {
     }
 
     // Prevent unserialization of the singleton instance
-    private function __wakeup()
+    public function __wakeup()
     {
         throw new Exception("Cannot unserialize a singleton.");
     }
@@ -116,12 +116,35 @@ class DBManager
     // ------------------Database favourites table methods------------------
     //////////////////////////////////////////////////////////////////////
 
+    // Checks if a movie is already favourited 
+    public function is_favourite(int $userId, int $movieId): bool
+    {
+        $query = $this->connection->prepare("SELECT 1 FROM favourites WHERE user_id = ? AND movie_id = ? LIMIT 1");
+        $query->bind_param("ii", $userId, $movieId);
+        $query->execute();
+        $result = $query->get_result();
+
+        $isFavourite = $result->num_rows > 0;
+
+        $query->close();
+        return $isFavourite;
+    }
+
     // Method to add a movie to a user's favourites
     public function add_to_favourites(int $userId, int $movieId): bool
     {
         $query = $this->connection->prepare("INSERT INTO favourites (user_id, movie_id) VALUES (?, ?)");
+
+        if (!$query) {
+            throw new Exception("Failed to prepare add_to_favourites query.");
+        }
+
         $query->bind_param("ii", $userId, $movieId);
-        $query->execute();
+
+        if (!$query->execute()) {
+            throw new Exception("Failed to execute add_to_favourites query: " . $query->error);
+        }
+
         $result = $query->affected_rows > 0;
         $query->close();
         return $result;
@@ -131,8 +154,17 @@ class DBManager
     public function remove_from_favourites(int $userId, int $movieId): bool
     {
         $query = $this->connection->prepare("DELETE FROM favourites WHERE user_id = ? AND movie_id = ?");
+
+        if (!$query) {
+            throw new Exception("Failed to prepare remove_from_favourites query.");
+        }
+
         $query->bind_param("ii", $userId, $movieId);
-        $query->execute();
+
+        if (!$query->execute()) {
+            throw new Exception("Failed to execute remove_from_favourites query: " . $query->error);
+        }
+
         $result = $query->affected_rows > 0;
         $query->close();
         return $result;
