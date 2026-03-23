@@ -164,17 +164,6 @@ class NetworkManager
         return $data;
     }
 
-    // Map the genres to the movie
-    // private function map_genres_to_movie(array $movie): array
-    // {
-    //     if (isset($movie['genre_ids'])) {
-    //         $movie['genres'] = array_map(fn($id) => $this->genreList[$id] ?? 'Unknown', $movie['genre_ids']);
-    //     } elseif (isset($movie['genres'])) {
-    //         $movie['genres'] = array_column($movie['genres'], 'name');
-    //     }
-    //     return $movie;
-    // }
-
     public function get_trending_movies(): array
     {
 
