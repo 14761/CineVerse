@@ -199,5 +199,48 @@ class NetworkManager
     }
 
 
+    public function get_trending_banners(int $limit = 10): array
+    {
+        $response = $this->client->request(
+            'GET',
+            'https://api.themoviedb.org/3/trending/movie/week',
+            [
+                'headers' => [
+                    'Authorization' => 'Bearer ' . $this->apiKey,
+                    'accept' => 'application/json',
+                ],
+            ]
+        );
+
+        if ($response->getStatusCode() !== 200) {
+            throw new Exception("Failed to fetch trending movies");
+        }
+
+        $data = json_decode($response->getBody()->getContents(), true);
+
+        if (!isset($data['results'])) {
+            throw new Exception("Invalid response from API");
+        }
+
+        $banners = [];
+
+        foreach ($data['results'] as $movie) {
+            if (!empty($movie['backdrop_path'])) {
+                $banners[] = [
+                    'title' => $movie['title'],
+                    'overview' => $movie['overview'],
+                    'backdrop' => 'https://image.tmdb.org/t/p/original' . $movie['backdrop_path'],
+                    'poster' => 'https://image.tmdb.org/t/p/w500' . ($movie['poster_path'] ?? ''),
+                    'id' => $movie['id']
+                ];
+            }
+
+            if (count($banners) >= $limit) {
+                break;
+            }
+        }
+
+        return $banners;
+    }
 }
 

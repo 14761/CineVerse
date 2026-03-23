@@ -35,6 +35,8 @@ require_once __DIR__ . '/../Models/NetworkManager.php';
     <?php
     require_once 'navbar.php';
     require_once __DIR__ . '/../helpers/functions.php';
+    $networkManager = NetworkManager::get_instance();
+    $banners = $networkManager->get_trending_banners();
 
     renderNavbar();
     ?>
@@ -47,7 +49,18 @@ require_once __DIR__ . '/../Models/NetworkManager.php';
         <div id="carouselExampleAutoplaying" class="carousel slide index-carousel-container" data-bs-ride="carousel">
             <div class="carousel-inner">
                 <div class="carousel-inner">
-                    <div class="carousel-item active">
+                    <?php foreach ($banners as $index => $banner): ?>
+                        <div class="carousel-item <?= $index === 0 ? 'active' : '' ?>">
+                            <img src="<?= htmlspecialchars($banner['backdrop']) ?>" class="d-block w-100"
+                                style="height: 500px; object-fit: cover;" alt="<?= htmlspecialchars($banner['title']) ?>">
+
+                            <div class="carousel-caption text-start">
+                                <h2><?= htmlspecialchars($banner['title']) ?></h2>
+                                <p><?= htmlspecialchars($banner['overview']) ?></p>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                    <!-- <div class="carousel-item active">
                         <img src="../Views/images/avengers.jpeg" class="d-block w-100" alt="...">
                     </div>
                     <div class="carousel-item">
@@ -55,7 +68,7 @@ require_once __DIR__ . '/../Models/NetworkManager.php';
                     </div>
                     <div class="carousel-item">
                         <img src="../Views/images/batman.jpg" class="d-block w-100" alt="...">
-                    </div>
+                    </div> -->
                 </div>
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying"
