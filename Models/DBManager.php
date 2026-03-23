@@ -51,7 +51,7 @@ class DBManager
     // ------------------Database reviews table methods------------------
     //////////////////////////////////////////////////////////////////////
 
-    public function rate_movie(int $userId, int $movieId, float $rating): bool
+    public function rate_movie(int $userId, int $movieId, float $rating, string $comment): bool
     {
         // Check if the user has already rated the movie
         $checkQuery = $this->connection->prepare("SELECT * FROM reviews WHERE user_id = ? AND movie_id = ? AND rating IS NOT NULL");
@@ -61,16 +61,16 @@ class DBManager
 
         if ($checkResult->num_rows > 0) {
             // If the user has already rated the movie, update the existing rating
-            $updateQuery = $this->connection->prepare("UPDATE reviews SET rating = ? WHERE user_id = ? AND movie_id = ?");
-            $updateQuery->bind_param("dii", $rating, $userId, $movieId);
+            $updateQuery = $this->connection->prepare("UPDATE reviews SET rating = ?, comment = ? WHERE user_id = ? AND movie_id = ?");
+            $updateQuery->bind_param("dsii", $rating, $comment, $userId, $movieId);
             $updateQuery->execute();
             $result = $updateQuery->affected_rows > 0;
             $updateQuery->close();
             return $result;
         } else {
             // If the user has not rated the movie, insert a new rating
-            $insertQuery = $this->connection->prepare("INSERT INTO reviews (user_id, movie_id, rating) VALUES (?, ?, ?)");
-            $insertQuery->bind_param("iid", $userId, $movieId, $rating);
+            $insertQuery = $this->connection->prepare("INSERT INTO reviews (user_id, movie_id, rating, comment) VALUES (?, ?, ?, ?)");
+            $insertQuery->bind_param("iids", $userId, $movieId, $rating, $comment);
             $insertQuery->execute();
             $result = $insertQuery->affected_rows > 0;
             $insertQuery->close();
@@ -110,6 +110,31 @@ class DBManager
 
         $query->close();
         return $count;
+    }
+
+    // Method to get reviews, usernames and comments for a specific movie
+    public function get_reviews_by_movie(int $movieId): array
+    {
+        $query = $this->connection->prepare(
+            "SELECT r.rating, r.comment, u.username
+         FROM reviews r
+         JOIN users u ON r.user_id = u.id
+         WHERE r.movie_id = ?
+         ORDER BY r.rating DESC"
+        );
+
+        $query->bind_param("i", $movieId);
+        $query->execute();
+        $result = $query->get_result();
+
+        $reviews = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $reviews[] = $row;
+        }
+
+        $query->close();
+        return $reviews;
     }
 
     ///////////////////////////////////////////////////////////////////////

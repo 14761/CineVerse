@@ -9,10 +9,12 @@ function renderNavbar()
     $isLoggedIn = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
     $username = $isLoggedIn ? htmlspecialchars($_SESSION['username']) : '';
 
+
+    // Renders the default Navbar
     echo '
     <nav class="navbar navbar-expand-lg bg-body-tertiary bg-navbar">
         <div class="container-fluid">
-            <a class="navbar-brand" href="../Views/index.php">CineVerse</a>
+            <a class="navbar-brand title-logo" href="../Views/index.php">CINEVERSE</a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent"
@@ -47,6 +49,7 @@ function renderNavbar()
                         aria-label="Search">
                 </form>';
 
+    // Checks if user is logged in and displays the profile and sigout buttons
     if ($isLoggedIn) {
         echo '
                 <a href="../Views/profile_settings.php" class="nav-link">
