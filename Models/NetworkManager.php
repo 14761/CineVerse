@@ -85,12 +85,12 @@ class NetworkManager
     public function search_movies(string $keyword): array
     {
         $movies = [];
-
+        $i = 1;
         while (true) {
 
             $movie_filter = [];
 
-            $i = 1;
+
             $response = $this->client->request('GET', "https://api.themoviedb.org/3/search/multi?query=$keyword&include_adult=false&language=en-US&page=$i", [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $this->apiKey,

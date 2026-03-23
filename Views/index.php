@@ -34,6 +34,7 @@ require_once __DIR__ . '/../Models/NetworkManager.php';
     <!-- Navbar -->
     <?php
     require_once 'navbar.php';
+    require_once __DIR__ . '/../helpers/functions.php';
 
     renderNavbar();
     ?>
@@ -42,23 +43,28 @@ require_once __DIR__ . '/../Models/NetworkManager.php';
     <div class="trending-movies">
 
         <!-- Carousel -->
-        <div id="carouselExample" class="carousel slide index-carousel-container">
+
+        <div id="carouselExampleAutoplaying" class="carousel slide index-carousel-container" data-bs-ride="carousel">
             <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <img src="../Views/images/avengers.jpeg" class="d-block w-100" alt="...">
-                </div>
-                <div class="carousel-item">
-                    <img src="../Views/images/avatar.webp" class="d-block w-100" alt="...">
-                </div>
-                <div class="carousel-item">
-                    <img src="../Views/images/batman.jpg" class="d-block w-100" alt="...">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="../Views/images/avengers.jpeg" class="d-block w-100" alt="...">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="../Views/images/avatar.webp" class="d-block w-100" alt="...">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="../Views/images/batman.jpg" class="d-block w-100" alt="...">
+                    </div>
                 </div>
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying"
+                data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Previous</span>
             </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying"
+                data-bs-slide="next">
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Next</span>
             </button>
@@ -80,7 +86,10 @@ require_once __DIR__ . '/../Models/NetworkManager.php';
                 // Display the movie card for the top 10 movies
                 for ($x = 0; $x < 20; $x++) {
                     echo '<div class="col-6 col-sm-4 col-md-3 col-lg-2">';
+                    echo '<div class=" card">';
                     movie_banner($movies[$x]);
+                    echo '<h5 class="card-title">' . e($movies[$x]['title']) . '</h5>';
+                    echo '</div>';
                     echo '</div>';
                 }
 
