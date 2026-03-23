@@ -1,88 +1,102 @@
 <?php
+require_once __DIR__ . '/../Models/DBManager.php';
 
-function renderCommentsSection()
+function renderCommentsSection(int $id): void
 {
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
     }
 
-    $isLoggedIn = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
-    $username = $isLoggedIn ? htmlspecialchars($_SESSION['username']) : '';
+    // Gets the reviews for the movie
+    $dbManager = DBManager::get_instance();
+    $reviews = $dbManager->get_reviews_by_movie($id);
 
-    if ($isLoggedIn) {
-        echo '
-        <div class="comments-container">
-            <div class="stars">
-                <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                    class="bi bi-star" viewBox="0 0 16 16">
-                    <path
-                        d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z" />
-                </svg></a>
-                <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                class="bi bi-star" viewBox="0 0 16 16">
-                <path
-                    d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z" />
-                </svg></a>
-                <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                class="bi bi-star" viewBox="0 0 16 16">
-                <path
-                    d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z" />
-                </svg></a>
-                <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                class="bi bi-star" viewBox="0 0 16 16">
-                <path
-                    d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z" />
-                </svg></a>
-                <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                class="bi bi-star" viewBox="0 0 16 16">
-                <path
-                    d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z" />
-                </svg></a>
+    // Checks if the user is logged in
+    $isLoggedIn = isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true;
+    ?>
+
+    <?php if ($isLoggedIn): ?>
+        <form action="../Controllers/MovieController.php?action=rate_movie&movie_id=<?php echo $id; ?>" method="POST">
+            <div class="comments-container">
+                <div class="mb-3">
+                    <label class="form-label text-light">Your Rating</label>
+
+                    <div class="star-rating">
+                        <?php for ($i = 10; $i >= 1; $i--): ?>
+                            <input type="radio" id="star<?php echo $i; ?>" name="rating" value="<?php echo $i; ?>">
+                            <label for="star<?php echo $i; ?>">★</label>
+                        <?php endfor; ?>
+                    </div>
+                </div>
+
+                <div class="comments-container2">
+                    <textarea name="comment" placeholder="Share your thoughts."></textarea>
+                </div>
+
+                <div id="ratingMessage"></div>
+                <button type="submit" class="btn btn-primary btn-post">Post</button>
             </div>
-            <div class="comments-container2">
-                <textarea placeholder="Share your thoughts."></textarea>
-            </div>
-            <button class="btn btn-primary btn-post">Post</button>
+        </form>
+
+        <div class="reviews-list mt-4">
+            <span>User comments</span>
+            <?php if (!empty($reviews)): ?>
+                <?php foreach ($reviews as $review): ?>
+                    <div class="review-item mb-3 p-3 rounded">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <strong class="text-light">
+                                <?php echo htmlspecialchars($review['username']); ?>
+                            </strong>
+                            <span class="text-warning">
+                                <?php echo htmlspecialchars((string) $review['rating']); ?>/10
+                            </span>
+                        </div>
+
+                        <p class="text-light mt-2 mb-0">
+                            <?php echo nl2br(htmlspecialchars($review['comment'])); ?>
+                        </p>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p class="text-muted mt-3">No reviews yet. Be the first!</p>
+            <?php endif; ?>
         </div>
-    ';
-    } else {
-        echo '
+
+    <?php else: ?>
         <div class="comments-container">
             <div class="comments-overlay">
                 <p>Please log in to write a comment</p>
             </div>
             <div class="stars">
-                <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                    class="bi bi-star" viewBox="0 0 16 16">
-                    <path
-                        d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z" />
-                </svg></a>
-                <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                    class="bi bi-star" viewBox="0 0 16 16">
-                    <path
-                        d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z" />
-                </svg></a>
-                <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                    class="bi bi-star" viewBox="0 0 16 16">
-                    <path
-                        d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z" />
-                </svg></a>
-                <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                    class="bi bi-star" viewBox="0 0 16 16">
-                    <path
-                        d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z" />
-                </svg></a>
-                <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                    class="bi bi-star" viewBox="0 0 16 16">
-                    <path
-                        d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z" />
-                </svg></a>
-                <textarea placeholder="Share your thoughts."></textarea>
-                <button class="btn btn-primary btn-post">Post</button>
+                <textarea placeholder="Share your thoughts." disabled></textarea>
+                <button class="btn btn-primary btn-post" disabled>Post</button>
             </div>
-        </div>';
-    }
+        </div>
+
+        <div class="reviews-list mt-4">
+            <?php if (!empty($reviews)): ?>
+                <?php foreach ($reviews as $review): ?>
+                    <div class="review-item mb-3 p-3 rounded">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <strong class="text-light">
+                                <?php echo htmlspecialchars($review['username']); ?>
+                            </strong>
+                            <span class="text-warning">
+                                <?php echo htmlspecialchars((string) $review['rating']); ?>/10
+                            </span>
+                        </div>
+
+                        <p class="text-light mt-2 mb-0">
+                            <?php echo nl2br(htmlspecialchars($review['comment'])); ?>
+                        </p>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p class="text-muted mt-3">No reviews yet. Be the first!</p>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
+
+    <?php
 }
-
-
-
+?>

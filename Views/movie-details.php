@@ -110,6 +110,11 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
         <span>
             Add a review
         </span>
+        <div>
+            <?php
+            echo "Reviews: " . $dbManager->get_reviews_count($id);
+            ?>
+        </div>
     </div>
     <div class="comments-section">
         <!-- <div class="comments-container">
@@ -189,7 +194,7 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
         </div> -->
         <?php
         require_once 'comments-section.php';
-        renderCommentsSection();
+        renderCommentsSection($id);
         ?>
     </div>
 

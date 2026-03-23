@@ -1,5 +1,5 @@
 
-
+// 
 document.addEventListener("DOMContentLoaded", () => {
     const favouriteBtn = document.getElementById("favouriteBtn");
 
@@ -42,3 +42,4 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+

@@ -2,7 +2,9 @@
    Custom style sheet overrides and additions to Bootstrap 
 */
 
-/* Variables */
+/*****************/
+/*    Variables  */
+/*****************/
 :root {
     --primary-color: #38bdf8;
     --secondary-color: #818cf8;
@@ -19,6 +21,10 @@
     --background-color: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
 }
 
+
+/*****************/
+/*   Body        */
+/*****************/
 * {
     box-sizing: border-box;
 }
@@ -39,6 +45,10 @@ body {
     margin-top: 10%;
 }
 
+
+/*****************/
+/* Auth Card     */
+/*****************/
 .auth-card {
     background: rgba(30, 41, 59, 0.7);
     backdrop-filter: blur(12px);
@@ -144,6 +154,10 @@ a {
     transition: all 0.2s ease;
 }
 
+
+/*****************/
+/*   Navbar      */
+/*****************/
 .bg-navbar {
     background-color: rgba(30, 41, 59, 0.7) !important;
     position: sticky;
@@ -195,21 +209,6 @@ a {
     color: #818cf8 !important;
 }
 
-/* .bt-register {
-    background: linear-gradient(90deg, #0f172a, #1e293b);
-    color: #f8fafc;
-    margin-left: 1rem;
-    border: none;
-    padding: 5px 10px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 1rem;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 4px;
-} */
-
 .bt-register {
     color: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
     margin-left: 1rem;
@@ -224,7 +223,9 @@ a {
     border-radius: 4px;
 }
 
-/* Index */
+/*****************/
+/*   Home page   */
+/*****************/
 .index-carousel-container {
     max-width: 900px;
     width: 100%;
@@ -269,6 +270,10 @@ a {
     gap: 1.5rem;
 }
 
+
+/*****************/
+/*      Footer   */
+/*****************/
 .join-community {
     display: flex;
     flex-direction: column;
@@ -309,6 +314,9 @@ a {
     margin-top: auto;
 }
 
+/*****************/
+/*    Filters    */
+/*****************/
 .filters {
     display: flex;
     gap: 0.8rem;
@@ -515,6 +523,9 @@ a {
     }
 }
 
+/*****************/
+/*    Ratings    */
+/*****************/
 .rating-container {
     display: flex;
     flex-direction: row;
@@ -665,7 +676,65 @@ a {
     resize: vertical;
 }
 
+.star-rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2px;
+    width: 100%;
+
+}
+
+
+@media (max-width: 768px) {
+    .star-rating {
+        max-width: fit-content;
+        gap: 4px;
+        padding: 0;
+    }
+
+    .star-rating label {
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.3);
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+}
+
+/* Hide radios */
+.star-rating input {
+    display: none;
+}
+
+/* Stars */
+.star-rating label {
+    font-size: 1.5rem;
+    color: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* Hover effect */
+.star-rating label:hover,
+.star-rating label:hover~label {
+    color: #ffc107;
+    transform: scale(1.1);
+}
+
+/* Selected stars */
+.star-rating input:checked~label {
+    color: #ffc107;
+}
+
+.star-rating input:checked~label {
+    text-shadow: 0 0 8px rgba(255, 193, 7, 0.6);
+}
+
+/********************/
 /* Profile Settings */
+/********************/
 .profile-settings-container {
     display: flex;
     flex-direction: row;
@@ -735,15 +804,16 @@ a {
     margin-bottom: 1rem;
 }
 
-/* Movie Banner */
+/*****************/
+/* Movie Banner  */
+/*****************/
 .movie-banner img {
     width: 100%;
     height: auto;
     border-radius: 12px;
 }
 
-
-/* Custom scrollbar to match dark mode aesthetics */
+/* Scroll bar */
 ::-webkit-scrollbar {
     width: 10px;
 }
