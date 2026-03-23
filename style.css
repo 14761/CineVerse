@@ -558,13 +558,58 @@ a {
 }
 
 .comments-container {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+    align-self: center;
+    max-width: 80%;
     border: 1px solid rgba(129, 140, 248, 0.3);
     padding: 2rem;
     border-radius: 12px;
     margin-top: 1rem;
+}
+
+@media (max-width: 768px) {
+    .comments-container {
+        max-width: 100%;
+    }
+}
+
+.comments-container2 {
+    display: flex;
+    flex-direction: row;
+    gap: 10rem;
+    border-radius: 12px;
+    margin-top: 1rem;
+}
+
+.btn-post {
+    margin-top: 2rem;
+}
+
+.comments-section {
+    position: relative;
+}
+
+/* Gray out effect */
+.comments-section.disabled {
+    filter: grayscale(100%);
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Overlay message */
+.comments-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(20, 20, 20, 0.7);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    color: white;
+    text-align: center;
+    border-radius: 1rem;
+    gap: 10px;
+    pointer-events: all;
 }
 
 @media (max-width: 768px) {
