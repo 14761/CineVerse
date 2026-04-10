@@ -5,12 +5,17 @@ declare(strict_types=1);
 session_start();
 
 require_once __DIR__ . '/../Models/DBManager.php';
+require_once __DIR__ . '/../Models/NetworkManager.php';
 
 $action = $_GET['action'] ?? '';
 
 switch ($action) {
     case 'rate_movie':
         rate_movie();
+        break;
+    case 'search':
+        $keyword = trim($_GET['keyword'] ?? '');
+        search($keyword);
         break;
     default:
         die('Invalid action.');
@@ -67,6 +72,31 @@ function rate_movie(): void
     } catch (Exception $e) {
         $_SESSION['error'] = 'Something went wrong. Please try again.';
         header('Location: ../Views/movie-details.php?id=' . $movieId);
+        exit;
+    }
+}
+
+function search(string $keyword): void
+{
+    if ($keyword === '') {
+        $_SESSION['error'] = 'Please enter a search term.';
+        header('Location: ../Views/movies.php');
+        exit;
+    }
+
+    try {
+        $networkManager = NetworkManager::get_instance();
+        $result = $networkManager->search_movies($keyword);
+
+        $_SESSION['search_results'] = $result;
+        $_SESSION['search_keyword'] = $keyword;
+
+        header('Location: ../Views/movies.php');
+        exit;
+
+    } catch (Exception $e) {
+        $_SESSION['error'] = 'Search error: ' . $e->getMessage();
+        header('Location: ../Views/movies.php');
         exit;
     }
 }
