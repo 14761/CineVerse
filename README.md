@@ -1,92 +1,203 @@
-# 🎬 Movie Hub - Rafael & Phelippe
+# CineVerse – Movie Review Web Application
 
-This is the backend and core structure for our movie review platform.
+## Overview
 
----
+CineVerse is a PHP-based web application that allows users to search for movies, view details, and leave ratings and comments. The application integrates with the TMDb (The Movie Database) API to fetch movie data.
 
-## 🛠 Tech Stack
-* **Language:** PHP 8.x
-* **HTTP Client:** Guzzle (for TMDb API integration)
-* **Database:** MySQL / MariaDB (XAMPP/WAMP)
-* **Dependency Manager:** Composer
+This project follows an MVC-like structure and demonstrates backend development using PHP, MySQL, and external API integration.
 
 ---
 
-## 🚀 Setup Instructions for Phelippe
+## Features
 
-Follow these steps to get the project running on your local server:
+* User registration and login
+* Movie search using TMDb API
+* View movie details
+* Add ratings and comments
+* View average ratings
+* Responsive interface
 
-### 1. Install Dependencies
-This project uses **Guzzle HTTP Client** to fetch data from the TMDb API. Since the `vendor/` folder is git-ignored, you must initialize the dependencies:
+---
 
-```bash
-# To install all dependencies from the composer.json file:
+## Technologies Used
+
+* PHP
+* MySQL
+* HTML / CSS
+* JavaScript
+* TMDb API
+* Composer (for dependency management)
+
+---
+
+## Project Structure
+
+```
+demo/
+│── Controllers/     # Handles application logic
+│── Models/          # Database interaction
+│── Views/           # UI templates
+│── helpers/         # External integrations (API, Firebase, etc.)
+│── style.css
+│── composer.json
+│── CineVerseDB.sql  # Database schema
+```
+
+---
+
+## Requirements
+
+* PHP 8+
+* MySQL / MariaDB
+* Composer
+* Web server (XAMPP, MAMP, or Apache)
+
+---
+
+## Setup Instructions
+
+### 1. Clone the Repository
+
+```
+git clone <your-repository-url>
+cd demo
+```
+
+---
+
+### 2. Install Dependencies
+
+```
 composer install
-
-# Note: If Guzzle is not yet in the project, run:
-# composer require guzzlehttp/guzzle
 ```
-
-### 2. Database Initialization
-Open **phpMyAdmin**, create a database named `MovieReviewDB`, and run the following script in the SQL tab:
-
-
-
-```sql
-CREATE DATABASE IF NOT EXISTS MovieReviewDB;
-USE MovieReviewDB;
-
--- 1. Users Table
-CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(150) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL, -- Long enough for BCRYPT hashing
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- 2. Movies Table (Caching TMDb data)
-CREATE TABLE movies (
-    id INT PRIMARY KEY,
-    title VARCHAR(255),           
-    overview TEXT, 
-    poster_path VARCHAR(255),
-    release_date DATE
-);
-
--- 3. Reviews Table
-CREATE TABLE reviews (
-    user_id INT NOT NULL,
-    movie_id INT NOT NULL,
-    rating DECIMAL(2,1) DEFAULT NULL CHECK (rating >= 0.0 AND rating <= 5.0),
-    comment TEXT,
-    PRIMARY KEY (user_id, movie_id),
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (movie_id) REFERENCES movies(id) ON DELETE CASCADE
-);
-
--- 4. Favourites Table
-CREATE TABLE favourites (
-    user_id INT NOT NULL,
-    movie_id INT NOT NULL,
-    PRIMARY KEY (user_id, movie_id),
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (movie_id) REFERENCES movies(id) ON DELETE CASCADE
-);
-```
-
-### 3. API Configuration
-You will need a TMDb API key to fetch movie details.
-1. Sign up/Login at [The Movie Database](https://www.themoviedb.org/).
-2. Create an API Key in your account settings.
-3. Add the key to your `.env` file (do not commit this file to GitHub).
 
 ---
 
-## 📌 Project Notes
-* **Caching:** We store movie details in the local `movies` table to minimize API calls.
-* **Security:** Always use `password_hash()` and `password_verify()` for user authentication.
+### 3. Environment Configuration
 
-## 👥 Contributors
-* **Rafael Cadena**
-* **Phelippe**
+Create a `.env` file in the root directory:
+
+```
+TMDB_API_KEY=your_tmdb_api_key_here
+DB_HOST=localhost
+DB_NAME=MovieReviewDB
+DB_USER=root
+DB_PASS=root
+DB_PORT=3306
+```
+
+> Note: Update database credentials depending on your local setup.
+
+---
+
+### 4. Database Setup
+
+1. Create a new database:
+
+```
+MovieReviewDB
+```
+
+2. Import the SQL file:
+
+```
+CineVerseDB.sql
+```
+
+---
+
+### 5. Database Schema (Important)
+
+Ensure your `users` table uses:
+
+```
+username VARCHAR(100) NOT NULL
+```
+
+Example:
+
+```
+CREATE TABLE users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL
+);
+```
+
+---
+
+### 6. Ratings Configuration (Important)
+
+The application expects ratings from **1 to 10**.
+
+Ensure your database allows this:
+
+```
+rating DECIMAL(3,1) CHECK (rating >= 1 AND rating <= 10)
+```
+
+---
+
+### 7. Run the Application
+
+Option 1 (XAMPP / MAMP):
+
+* Place project inside `htdocs` or `www`
+* Open:
+
+```
+http://localhost/demo
+```
+
+Option 2 (PHP built-in server):
+
+```
+php -S localhost:8000
+```
+
+Then open:
+
+```
+http://localhost:8000
+```
+
+---
+
+## Notes & Known Issues
+
+* Do NOT include the following folders when submitting or cloning:
+
+  * `node_modules/`
+  * `vendor/`
+  * `.git/`
+  * `__MACOSX/`
+  * `.DS_Store`
+
+* If you encounter database errors:
+
+  * Check column names (`username` vs `name`)
+  * Ensure rating range matches the application (1–10)
+
+* Firebase is included but may require additional configuration if used.
+
+---
+
+## Future Improvements
+
+* Improve error handling and validation
+* Move configuration fully into `.env`
+* Add user profile management
+* Improve UI/UX design
+
+---
+
+## Author
+
+Phelippe Duarte Rafael Cadena
+
+---
+
+## License
+
+This project is for educational purposes only.
