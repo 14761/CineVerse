@@ -37,7 +37,7 @@ demo/
 │── Controllers/     # Handles application logic
 │── Models/          # Database interaction
 │── Views/           # UI templates
-│── helpers/         # External integrations (API, Firebase, etc.)
+│── helpers/         # External integrations (API, etc.)
 │── style.css
 │── composer.json
 │── CineVerseDB.sql  # Database schema
@@ -178,8 +178,6 @@ http://localhost:8000
 
   * Check column names (`username` vs `name`)
   * Ensure rating range matches the application (1–10)
-
-* Firebase is included but may require additional configuration if used.
 
 ---
 

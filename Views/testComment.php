@@ -23,10 +23,6 @@ $dbManager = DBManager::get_instance();
 
     <link rel="stylesheet" href="../style.css">
 
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"></script>
-    <script src="../helpers/firebaseScript.js"></script>
 
 </head>
 
