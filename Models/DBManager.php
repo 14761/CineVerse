@@ -1,18 +1,26 @@
 <?php
 declare(strict_types=1);
 
+// Load environment variables from the .env file
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv->load();
+
 class DBManager
 {
     private static $instance = null;
     private $server = "localhost";
-    private $userName = "root";
-    private $password = "root";
-    private $db = "MovieReviewDB";
-    private $port = 8889;
+    private $userName;
+    private $password;
+    private $db;
+    private $port;
     private $connection;
 
     private function __construct()
     {
+        $this->userName = $_ENV['DB_USER'];
+        $this->password = $_ENV['DB_PASS'];
+        $this->db = $_ENV['DB_NAME'];
+        $this->port = $_ENV['DB_PORT'];
         $this->connection = new mysqli($this->server, $this->userName, $this->password, $this->db, $this->port);
 
         if ($this->connection->connect_error) {
