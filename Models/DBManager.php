@@ -8,7 +8,7 @@ $dotenv->load();
 class DBManager
 {
     private static $instance = null;
-    private $server = "localhost";
+    private $server;
     private $userName;
     private $password;
     private $db;
@@ -17,6 +17,7 @@ class DBManager
 
     private function __construct()
     {
+        $this->server = $_ENV['DB_HOST'];
         $this->userName = $_ENV['DB_USER'];
         $this->password = $_ENV['DB_PASS'];
         $this->db = $_ENV['DB_NAME'];
