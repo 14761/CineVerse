@@ -792,7 +792,7 @@ a {
 
 .profile-settings-avatar img {
     width: 150px;
-    height: auto;
+    height: 150px;
     display: block;
     object-fit: cover;
     border-radius: 50%;
