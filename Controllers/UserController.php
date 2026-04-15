@@ -231,15 +231,29 @@ function update_info(): void
     $userName = trim($_POST['username'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $password = $_POST['password'] ?? '';
+    $newPassword = $_POST['new_password'] ?? '';
+    $confirmNewPassword = $_POST['confirm_new_password'] ?? '';
 
     if ($userName === '' || $email === '' || $password === '') {
-        $_SESSION['error'] = 'Please fill in all fields (including password to confirm changes).';
+        $_SESSION['error'] = 'Please fill in all fields (including current password to confirm changes).';
         header('Location: ../Views/profile_settings.php');
         exit;
     }
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $_SESSION['error'] = 'Please enter a valid email address.';
+        header('Location: ../Views/profile_settings.php');
+        exit;
+    }
+
+    if ($newPassword !== '' && $newPassword !== $confirmNewPassword) {
+        $_SESSION['error'] = 'New passwords do not match.';
+        header('Location: ../Views/profile_settings.php');
+        exit;
+    }
+
+    if ($newPassword !== '' && strlen($newPassword) < 8) {
+        $_SESSION['error'] = 'New password must be at least 8 characters long.';
         header('Location: ../Views/profile_settings.php');
         exit;
     }
@@ -260,7 +274,7 @@ function update_info(): void
             exit;
         }
 
-        $success = $dbManager->user_update_account($userId, $userName, $email);
+        $success = $dbManager->user_update_account($userId, $userName, $email, $newPassword);
 
         if ($success) {
             $_SESSION['username'] = $userName;

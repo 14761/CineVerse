@@ -41,6 +41,17 @@ require_once __DIR__ . '/../Models/NetworkManager.php';
     renderNavbar();
     ?>
 
+    <?php if (isset($_SESSION['success'])): ?>
+        <div class="container mt-3">
+            <div class="alert alert-success">
+                <?php
+                echo htmlspecialchars($_SESSION['success'], ENT_QUOTES);
+                unset($_SESSION['success']);
+                ?>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <!-- Trending Movies -->
     <div class="trending-movies">
 

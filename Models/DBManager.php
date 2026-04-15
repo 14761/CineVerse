@@ -332,16 +332,27 @@ class DBManager
         return null;
     }
 
-    // Method to update user's profile information without changing password
-    public function user_update_account(int $userId, string $name, string $email): bool
+    // Method to update a user's profile information and optionally change the password
+    public function user_update_account(int $userId, string $name, string $email, ?string $newPassword = null): bool
     {
-        $query = $this->connection->prepare("UPDATE users SET username = ?, email = ? WHERE id = ?");
+        if ($newPassword !== null && $newPassword !== '') {
+            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+            $query = $this->connection->prepare("UPDATE users SET username = ?, email = ?, password = ? WHERE id = ?");
 
-        if (!$query) {
-            throw new Exception("Failed to prepare user update query: " . $this->connection->error);
+            if (!$query) {
+                throw new Exception("Failed to prepare user update query: " . $this->connection->error);
+            }
+
+            $query->bind_param("sssi", $name, $email, $hashedPassword, $userId);
+        } else {
+            $query = $this->connection->prepare("UPDATE users SET username = ?, email = ? WHERE id = ?");
+
+            if (!$query) {
+                throw new Exception("Failed to prepare user update query: " . $this->connection->error);
+            }
+
+            $query->bind_param("ssi", $name, $email, $userId);
         }
-
-        $query->bind_param("ssi", $name, $email, $userId);
 
         if (!$query->execute()) {
             throw new Exception("Failed to execute user update query: " . $query->error);
