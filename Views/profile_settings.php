@@ -79,7 +79,12 @@ session_start();
                         value="<?php echo htmlspecialchars($_SESSION['email'], ENT_QUOTES); ?>">
                 </div>
                 <div class="form-group">
-                    <label for="password">Current Password</label>
+                    <label for="new_password">New Password</label>
+                    <input type="password" class="form-control" id="new_password" name="new_password" required
+                        placeholder="Enter new password">
+                </div>
+                <div class="form-group">
+                    <label for="current_password">Current Password</label>
                     <input type="password" class="form-control" id="password" name="password" required
                         placeholder="Enter current password to confirm changes">
                 </div>
