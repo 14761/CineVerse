@@ -192,7 +192,8 @@ http://localhost:8000
 
 ## Author
 
-Phelippe Duarte Rafael Cadena
+Phelippe Duarte 
+Rafael Cadena
 
 ---
 
