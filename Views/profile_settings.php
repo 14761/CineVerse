@@ -2,6 +2,18 @@
 
 <?php
 session_start();
+require_once __DIR__ . '/../Models/DBManager.php';
+
+$profilePicture = $_SESSION['profile_picture'] ?? null;
+if ($profilePicture === null && isset($_SESSION['user_id'])) {
+    $dbManager = DBManager::get_instance();
+    $user = $dbManager->get_user_by_id((int) $_SESSION['user_id']);
+    if ($user && !empty($user['profile_picture'])) {
+        $profilePicture = $user['profile_picture'];
+        $_SESSION['profile_picture'] = $profilePicture;
+    }
+}
+$profilePicture = $profilePicture ?? 'images/profile_sample.jpg';
 ?>
 
 <!DOCTYPE html>
@@ -40,7 +52,8 @@ session_start();
                 Profile Picture
             </span>
             <div class="profile-settings-avatar">
-                <img src="../Views/images/profile_sample.jpg" alt="Profile Picture">
+                <?php $profilePicture = $_SESSION['profile_picture'] ?? 'images/profile_sample.jpg'; ?>
+                <img src="<?php echo htmlspecialchars($profilePicture, ENT_QUOTES); ?>" alt="Profile Picture">
             </div>
         </div>
 
@@ -67,11 +80,16 @@ session_start();
                 </div>
             <?php endif; ?>
 
-            <form action="../Controllers/UserController.php?action=update_info" method="post">
+            <form action="../Controllers/UserController.php?action=update_info" method="post" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="username">Name</label>
                     <input type="text" class="form-control" id="username" name="username" required
                         value="<?php echo htmlspecialchars($_SESSION['username'], ENT_QUOTES); ?>">
+                </div>
+                <div class="form-group">
+                    <label for="profile_picture">Profile Picture</label>
+                    <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/png, image/jpeg, image/gif">
+                    <small class="form-text text-muted">Optional. JPG, PNG, or GIF up to 2MB.</small>
                 </div>
                 <div class="form-group">
                     <label for="email">Email</label>

@@ -119,6 +119,7 @@ function login_user(): void
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['email'] = $user['email'];
+            $_SESSION['profile_picture'] = $user['profile_picture'] ?? 'images/profile_sample.jpg';
 
             $_SESSION['success'] = 'Login successful.';
             header('Location: ../Views/index.php');
@@ -233,6 +234,7 @@ function update_info(): void
     $password = $_POST['password'] ?? '';
     $newPassword = $_POST['new_password'] ?? '';
     $confirmNewPassword = $_POST['confirm_new_password'] ?? '';
+    $profilePicturePath = null;
 
     if ($userName === '' || $email === '' || $password === '') {
         $_SESSION['error'] = 'Please fill in all fields (including current password to confirm changes).';
@@ -258,6 +260,54 @@ function update_info(): void
         exit;
     }
 
+    if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] !== UPLOAD_ERR_NO_FILE) {
+        if ($_FILES['profile_picture']['error'] !== UPLOAD_ERR_OK) {
+            $_SESSION['error'] = 'There was a problem uploading the profile picture.';
+            header('Location: ../Views/profile_settings.php');
+            exit;
+        }
+
+        if ($_FILES['profile_picture']['size'] > 2 * 1024 * 1024) {
+            $_SESSION['error'] = 'Profile picture must be 2MB or smaller.';
+            header('Location: ../Views/profile_settings.php');
+            exit;
+        }
+
+        $finfo = new finfo(FILEINFO_MIME_TYPE);
+        $mimeType = $finfo->file($_FILES['profile_picture']['tmp_name']);
+        $allowedTypes = [
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png',
+            'image/gif' => 'gif',
+        ];
+
+        if (!isset($allowedTypes[$mimeType])) {
+            $_SESSION['error'] = 'Only JPG, PNG, and GIF profile pictures are allowed.';
+            header('Location: ../Views/profile_settings.php');
+            exit;
+        }
+
+        $fileExtension = $allowedTypes[$mimeType];
+        $newFileName = uniqid('profile_', true) . '.' . $fileExtension;
+        $uploadDir = __DIR__ . '/../Views/images/profile_pics';
+
+        if (!is_dir($uploadDir) && !mkdir($uploadDir, 0755, true)) {
+            $_SESSION['error'] = 'Unable to create profile picture directory.';
+            header('Location: ../Views/profile_settings.php');
+            exit;
+        }
+
+        $targetPath = $uploadDir . '/' . $newFileName;
+
+        if (!move_uploaded_file($_FILES['profile_picture']['tmp_name'], $targetPath)) {
+            $_SESSION['error'] = 'Unable to save the uploaded profile picture.';
+            header('Location: ../Views/profile_settings.php');
+            exit;
+        }
+
+        $profilePicturePath = 'images/profile_pics/' . $newFileName;
+    }
+
     try {
         $dbManager = DBManager::get_instance();
         $user = $dbManager->get_user_by_id($userId);
@@ -274,11 +324,16 @@ function update_info(): void
             exit;
         }
 
-        $success = $dbManager->user_update_account($userId, $userName, $email, $newPassword);
+        $success = $dbManager->user_update_account($userId, $userName, $email, $newPassword, $profilePicturePath);
 
         if ($success) {
             $_SESSION['username'] = $userName;
             $_SESSION['email'] = $email;
+            if ($profilePicturePath !== null) {
+                $_SESSION['profile_picture'] = $profilePicturePath;
+            } elseif (!isset($_SESSION['profile_picture'])) {
+                $_SESSION['profile_picture'] = $user['profile_picture'] ?? 'images/profile_sample.jpg';
+            }
             $_SESSION['success'] = 'Profile updated successfully.';
         } else {
             $_SESSION['error'] = 'Could not update profile or no changes were made.';
