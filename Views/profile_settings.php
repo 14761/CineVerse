@@ -48,9 +48,9 @@ session_start();
             <span>
                 Personal Information
             </span>
-            <form action="../Controllers/profile_settings_controller.php" method="post">
+            <form action="../Controllers/UserController.php?action=update_info" method="post">
                 <div class="form-group">
-                    <label for="username">Username</label>
+                    <label for="username">Name</label>
                     <input type="text" class="form-control" id="username" name="username"
                         value="<?php echo $_SESSION['username']; ?>">
                 </div>

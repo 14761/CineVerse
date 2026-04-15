@@ -18,6 +18,9 @@ switch ($action) {
     case 'logout':
         logout_user();
         break;
+    case 'update_info':
+        update_info();
+        break;
     case 'toggleFavourite':
         toggle_favourite();
         break;
@@ -208,6 +211,57 @@ function toggle_favourite(): void
             'success' => false,
             'message' => $e->getMessage()
         ]);
+        exit;
+    }
+}
+
+function update_info(): void
+{
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        header('Location: ../Views/profile_settings.php');
+        exit;
+    }
+
+    if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
+        header('Location: ../Views/login.php');
+        exit;
+    }
+
+    $userId = (int) ($_SESSION['user_id'] ?? 0);
+    $userName = trim($_POST['username'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
+
+    if ($userName === '' || $email === '' || $password === '') {
+        $_SESSION['error'] = 'Please fill in all fields (including password to confirm changes).';
+        header('Location: ../Views/profile_settings.php');
+        exit;
+    }
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $_SESSION['error'] = 'Please enter a valid email address.';
+        header('Location: ../Views/profile_settings.php');
+        exit;
+    }
+
+    try {
+        $dbManager = DBManager::get_instance();
+        $success = $dbManager->user_update_account($userId, $userName, $email, $password);
+
+        if ($success) {
+            $_SESSION['username'] = $userName;
+            $_SESSION['email'] = $email;
+            $_SESSION['success'] = 'Profile updated successfully.';
+        } else {
+            $_SESSION['error'] = 'Could not update profile or no changes were made.';
+        }
+
+        header('Location: ../Views/profile_settings.php');
+        exit;
+
+    } catch (Exception $e) {
+        $_SESSION['error'] = 'Something went wrong. Please try again.';
+        header('Location: ../Views/profile_settings.php');
         exit;
     }
 }

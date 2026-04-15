@@ -6,6 +6,9 @@ unset($_SESSION['search_results']);
 
 require_once __DIR__ . '/../Views/MovieCard.php';
 require_once __DIR__ . '/../Models/NetworkManager.php';
+
+$selectedGenre = $_GET['genre'] ?? 'All Genres';
+$selectedSort = $_GET['sort'] ?? 'Most Popular';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -57,38 +60,40 @@ require_once __DIR__ . '/../Models/NetworkManager.php';
     <?php endforeach; ?>
     </div>
 
-    <div class="filters">
-        <div class="select-wrap">
-            <select class="custom-select">
-                <option>All Genres</option>
-                <option>Action</option>
-                <option>Sci-Fi</option>
-                <option>Mystery</option>
-                <option>Romance</option>
-                <option>Horror</option>
-                <option>Comedy</option>
-                <option>Fantasy</option>
-                <option>Thriller</option>
-                <option>Adventure</option>
-                <option>War</option>
-            </select>
-            <span class="select-icon">
-                <i class="bi bi-chevron-down"></i>
-            </span>
-        </div>
+    <form action="movies.php" method="GET" id="filter-form">
+        <div class="filters">
+            <div class="select-wrap">
+                <select name="genre" class="custom-select" onchange="document.getElementById('filter-form').submit()">
+                    <option <?= $selectedGenre === 'All Genres' ? 'selected' : '' ?>>All Genres</option>
+                    <option <?= $selectedGenre === 'Action' ? 'selected' : '' ?>>Action</option>
+                    <option <?= $selectedGenre === 'Sci-Fi' ? 'selected' : '' ?>>Sci-Fi</option>
+                    <option <?= $selectedGenre === 'Mystery' ? 'selected' : '' ?>>Mystery</option>
+                    <option <?= $selectedGenre === 'Romance' ? 'selected' : '' ?>>Romance</option>
+                    <option <?= $selectedGenre === 'Horror' ? 'selected' : '' ?>>Horror</option>
+                    <option <?= $selectedGenre === 'Comedy' ? 'selected' : '' ?>>Comedy</option>
+                    <option <?= $selectedGenre === 'Fantasy' ? 'selected' : '' ?>>Fantasy</option>
+                    <option <?= $selectedGenre === 'Thriller' ? 'selected' : '' ?>>Thriller</option>
+                    <option <?= $selectedGenre === 'Adventure' ? 'selected' : '' ?>>Adventure</option>
+                    <option <?= $selectedGenre === 'War' ? 'selected' : '' ?>>War</option>
+                </select>
+                <span class="select-icon">
+                    <i class="bi bi-chevron-down"></i>
+                </span>
+            </div>
 
-        <div class="select-wrap">
-            <select class="custom-select">
-                <option>Highest Rated</option>
-                <option>Most Popular</option>
-                <option>Newest</option>
-                <option>Oldest</option>
-            </select>
-            <span class="select-icon">
-                <i class="bi bi-chevron-down"></i>
-            </span>
+            <div class="select-wrap">
+                <select name="sort" class="custom-select" onchange="document.getElementById('filter-form').submit()">
+                    <option <?= $selectedSort === 'Highest Rated' ? 'selected' : '' ?>>Highest Rated</option>
+                    <option <?= $selectedSort === 'Most Popular' ? 'selected' : '' ?>>Most Popular</option>
+                    <option <?= $selectedSort === 'Newest' ? 'selected' : '' ?>>Newest</option>
+                    <option <?= $selectedSort === 'Oldest' ? 'selected' : '' ?>>Oldest</option>
+                </select>
+                <span class="select-icon">
+                    <i class="bi bi-chevron-down"></i>
+                </span>
+            </div>
         </div>
-    </div>
+    </form>
 
     <div class="container text-center">
         <div class="row justify-content-center g-4">
@@ -98,28 +103,27 @@ require_once __DIR__ . '/../Models/NetworkManager.php';
             $networkManager = NetworkManager::get_instance();
             $movies = $networkManager->get_trending_movies();
 
-            // Display the movie card for the top 10 movies
-            foreach ($movies as $movie) {
-                if ($movie != null) {
-                    echo '<div class="col-6 col-sm-4 col-md-3 col-lg-2">';
-                    movie_banner($movie);
-                    echo '</div>';
-                }
+            // 
+            if ($selectedGenre !== 'All Genres') {
+                $movies = array_filter($movies, function($movie) use ($selectedGenre) {
+                    return in_array($selectedGenre, $movie['genres'] ?? []);
+                });
             }
 
-            ?>
-        </div>
-    </div>
+            // Sort movies based on the selected sort option
+            usort($movies, function($a, $b) use ($selectedSort) {
+                if ($selectedSort === 'Highest Rated') {
+                    return ($b['vote_average'] ?? 0) <=> ($a['vote_average'] ?? 0);
+                } elseif ($selectedSort === 'Newest') {
+                    return strtotime($b['release_date'] ?? '0') <=> strtotime($a['release_date'] ?? '0');
+                } elseif ($selectedSort === 'Oldest') {
+                    return strtotime($a['release_date'] ?? '0') <=> strtotime($b['release_date'] ?? '0');
+                } else { // Most Popular
+                    return ($b['popularity'] ?? 0) <=> ($a['popularity'] ?? 0);
+                }
+            });
 
-    <div class="container text-center">
-        <div class="row justify-content-center g-4">
-            <?php
-
-            // Get the singleton instance of NetworkManager and fetch trending movies
-            $networkManager = NetworkManager::get_instance();
-            $movies = $networkManager->get_trending_movies();
-
-            // Display the movie card for the top 10 movies
+            // Display the movie card for the top movies
             foreach ($movies as $movie) {
                 if ($movie != null) {
                     echo '<div class="col-6 col-sm-4 col-md-3 col-lg-2">';

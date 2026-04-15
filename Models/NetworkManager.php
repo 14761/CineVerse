@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 // Load Composer's autoloader
-require_once(__DIR__ . '/../vendor/autoload.php');
+require_once __DIR__ . '/../vendor/autoload.php';
 
 // Load environment variables from the .env file
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');

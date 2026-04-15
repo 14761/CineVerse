@@ -1,27 +1,37 @@
 <?php
 declare(strict_types=1);
 
+require_once __DIR__ . '/../vendor/autoload.php';
+
+
 // Load environment variables from the .env file
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
 class DBManager
 {
+    // private static $instance = null;
+    // private $server;
+    // private $userName;
+    // private $password;
+    // private $db;
+    // private $port;
+    // private $connection;
     private static $instance = null;
-    private $server;
-    private $userName;
-    private $password;
-    private $db;
-    private $port;
+    private $server = "localhost";
+    private $userName = "root";
+    private $password = "root";
+    private $db = "MovieReviewDB";
+    private $port = 8889;
     private $connection;
 
     private function __construct()
     {
-        $this->server = $_ENV['DB_HOST'];
-        $this->userName = $_ENV['DB_USER'];
-        $this->password = $_ENV['DB_PASS'];
-        $this->db = $_ENV['DB_NAME'];
-        $this->port = $_ENV['DB_PORT'];
+        // $this->server = $_ENV['DB_HOST'];
+        // $this->userName = $_ENV['DB_USER'];
+        // $this->password = $_ENV['DB_PASS'];
+        // $this->db = $_ENV['DB_NAME'];
+        // $this->port = $_ENV['DB_PORT'];
         $this->connection = new mysqli($this->server, $this->userName, $this->password, $this->db, $this->port);
 
         if ($this->connection->connect_error) {
@@ -304,6 +314,20 @@ class DBManager
         }
     }
 
+    // Method to update user's profile information
+    public function user_update_account(int $userId, string $name, string $email, string $password): bool
+    {
+        // Hash the new password before storing it in the database
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+        $query = $this->connection->prepare("UPDATE users SET username = ?, email = ?, password = ? WHERE id = ?");
+        $query->bind_param("sssi", $name, $email, $hashedPassword, $userId);
+        $query->execute();
+        $result = $query->affected_rows > 0;
+        $query->close();
+        return $result;
+    }
+
     // Method to delete a user's account from the database
     // I'm not sure if this should also delete the user's reviews and favourites, or if we should keep them for historical purposes. For now, it deletes all the information related to the user account.
     public function user_delete_account(int $userId): bool
@@ -315,5 +339,6 @@ class DBManager
         $query->close();
         return $result;
     }
+
 
 }
