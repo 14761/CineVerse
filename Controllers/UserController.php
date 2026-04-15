@@ -246,7 +246,21 @@ function update_info(): void
 
     try {
         $dbManager = DBManager::get_instance();
-        $success = $dbManager->user_update_account($userId, $userName, $email, $password);
+        $user = $dbManager->get_user_by_id($userId);
+
+        if (!$user) {
+            $_SESSION['error'] = 'User not found.';
+            header('Location: ../Views/profile_settings.php');
+            exit;
+        }
+
+        if (!password_verify($password, $user['password'])) {
+            $_SESSION['error'] = 'Password confirmation failed. Please enter your current password.';
+            header('Location: ../Views/profile_settings.php');
+            exit;
+        }
+
+        $success = $dbManager->user_update_account($userId, $userName, $email);
 
         if ($success) {
             $_SESSION['username'] = $userName;

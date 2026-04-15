@@ -314,15 +314,39 @@ class DBManager
         }
     }
 
-    // Method to update user's profile information
-    public function user_update_account(int $userId, string $name, string $email, string $password): bool
+    // Method to get a user by their ID
+    public function get_user_by_id(int $userId): ?array
     {
-        // Hash the new password before storing it in the database
-        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-
-        $query = $this->connection->prepare("UPDATE users SET username = ?, email = ?, password = ? WHERE id = ?");
-        $query->bind_param("sssi", $name, $email, $hashedPassword, $userId);
+        $query = $this->connection->prepare("SELECT * FROM users WHERE id = ?");
+        $query->bind_param("i", $userId);
         $query->execute();
+        $result = $query->get_result();
+
+        if ($result->num_rows > 0) {
+            $user = $result->fetch_assoc();
+            $query->close();
+            return $user;
+        }
+
+        $query->close();
+        return null;
+    }
+
+    // Method to update user's profile information without changing password
+    public function user_update_account(int $userId, string $name, string $email): bool
+    {
+        $query = $this->connection->prepare("UPDATE users SET username = ?, email = ? WHERE id = ?");
+
+        if (!$query) {
+            throw new Exception("Failed to prepare user update query: " . $this->connection->error);
+        }
+
+        $query->bind_param("ssi", $name, $email, $userId);
+
+        if (!$query->execute()) {
+            throw new Exception("Failed to execute user update query: " . $query->error);
+        }
+
         $result = $query->affected_rows > 0;
         $query->close();
         return $result;

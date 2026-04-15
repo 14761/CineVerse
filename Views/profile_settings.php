@@ -48,21 +48,40 @@ session_start();
             <span>
                 Personal Information
             </span>
+
+            <?php if (isset($_SESSION['error'])): ?>
+                <div class="alert alert-danger">
+                    <?php
+                    echo $_SESSION['error'];
+                    unset($_SESSION['error']);
+                    ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if (isset($_SESSION['success'])): ?>
+                <div class="alert alert-success">
+                    <?php
+                    echo $_SESSION['success'];
+                    unset($_SESSION['success']);
+                    ?>
+                </div>
+            <?php endif; ?>
+
             <form action="../Controllers/UserController.php?action=update_info" method="post">
                 <div class="form-group">
                     <label for="username">Name</label>
-                    <input type="text" class="form-control" id="username" name="username"
-                        value="<?php echo $_SESSION['username']; ?>">
+                    <input type="text" class="form-control" id="username" name="username" required
+                        value="<?php echo htmlspecialchars($_SESSION['username'], ENT_QUOTES); ?>">
                 </div>
                 <div class="form-group">
                     <label for="email">Email</label>
-                    <input type="email" class="form-control" id="email" name="email"
-                        value="<?php echo $_SESSION['email']; ?>">
+                    <input type="email" class="form-control" id="email" name="email" required
+                        value="<?php echo htmlspecialchars($_SESSION['email'], ENT_QUOTES); ?>">
                 </div>
                 <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" class="form-control" id="password" name="password"
-                        placeholder="New password">
+                    <label for="password">Current Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required
+                        placeholder="Enter current password to confirm changes">
                 </div>
                 <button type="submit" class="btn btn-primary">Update</button>
             </form>
