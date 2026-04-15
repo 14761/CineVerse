@@ -58,7 +58,7 @@ function renderCommentsSection(int $id): void
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
-                <p class="text-muted mt-3">No reviews yet. Be the first!</p>
+                <p class="text-muted mt-3 comment-placeholder">No reviews yet. Be the first!</p>
             <?php endif; ?>
         </div>
 
