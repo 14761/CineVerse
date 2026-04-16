@@ -78,7 +78,7 @@ composer install
 Create a `.env` file in the root directory:
 
 ```
-TMDB_API_KEY=your_tmdb_api_key_here
+API_KEY=your_tmdb_api_key_here
 DB_HOST=localhost
 DB_NAME=MovieReviewDB
 DB_USER=root
@@ -184,7 +184,6 @@ http://localhost:8000
 ## Future Improvements
 
 * Improve error handling and validation
-* Move configuration fully into `.env`
 * Add user profile management
 * Improve UI/UX design
 
