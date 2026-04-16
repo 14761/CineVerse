@@ -1,12 +1,23 @@
 <?php
 require_once __DIR__ . '/../helpers/functions.php';
 
+// Build poster URL with local fallback when poster_path is missing.
+function movie_poster_url(array $movie, string $size = 'w342'): string
+{
+  $posterPath = $movie['poster_path'] ?? '';
+
+  if (!is_string($posterPath) || $posterPath === '') {
+    return 'images/img_sample_movie_cover.png';
+  }
+
+  return 'https://image.tmdb.org/t/p/' . $size . $posterPath;
+}
 
 // Display movie card
 function echo_movie_card($movie)
 {
   echo "<div class='card' style='width: 16rem;'>";
-  echo "<img src='https://image.tmdb.org/t/p/w342" . e($movie['poster_path']) . "' class='card-img-top' alt='" . e($movie['title']) . "'>";
+  echo "<img src='" . e(movie_poster_url($movie, 'w342')) . "' class='card-img-top' alt='" . e($movie['title']) . "' onerror=\"this.onerror=null;this.src='images/img_sample_movie_cover.png';\">";
   echo "<div class='card-body'>";
   echo "<h5 class='card-title'>" . e($movie['title']) . "</h5>";
   echo "<p class='card-text'>" . e($movie['overview']) . "</p>";
@@ -20,7 +31,7 @@ function movie_banner($movie)
 {
   echo "<div class='movie-banner'>";
   echo "<a href='movie-details.php?id=" . e($movie['id']) . "'>";
-  echo "<img src='https://image.tmdb.org/t/p/w342" . e($movie['poster_path']) . "' class='movie-banner-img' alt='" . e($movie['title']) . "'>";
+  echo "<img src='" . e(movie_poster_url($movie, 'w342')) . "' class='movie-banner-img' alt='" . e($movie['title']) . "' onerror=\"this.onerror=null;this.src='images/img_sample_movie_cover.png';\">";
   echo "</a>";
   echo "</div>";
 }

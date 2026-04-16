@@ -107,7 +107,7 @@ require_once __DIR__ . '/../Models/NetworkManager.php';
                 $networkManager = NetworkManager::get_instance();
                 $movies = $networkManager->get_trending_movies();
 
-                // Display the movie card for the top 10 movies
+                // Display the movie card for the top 20 movies
                 for ($x = 0; $x < 20; $x++) {
                     echo '<div class="col-6 col-sm-4 col-md-3 col-lg-2">';
                     echo '<div class=" card">';

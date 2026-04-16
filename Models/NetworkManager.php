@@ -25,7 +25,6 @@ class NetworkManager
 
         // Fetch genres and populate the genre list
         $this->fetch_genres();
-
     }
 
     public static function get_instance(): NetworkManager
@@ -35,6 +34,37 @@ class NetworkManager
         }
 
         return self::$instance;
+    }
+
+    public function getFilteredMovies(?string $genreId, string $sort, int $page): array
+    {
+        $url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=$page&sort_by=$sort";
+
+        if ($genreId !== null && $genreId !== '' && $genreId !== 'all') {
+            $url .= "&with_genres=" . urlencode($genreId);
+        }
+
+        $response = $this->client->request('GET', $url, [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $this->apiKey,
+                'accept' => 'application/json',
+            ],
+        ]);
+
+        // Check if the response status code is 200 (OK)
+        if ($response->getStatusCode() !== 200) {
+            throw new Exception("Failed to fetch trending movies: " . $response->getStatusCode());
+        }
+
+        // Decode the JSON response into an associative array
+        $data = json_decode($response->getBody()->getContents(), true);
+
+        // Check if the 'results' key exists in the response data
+        if (!isset($data['results'])) {
+            throw new Exception("Invalid response from API");
+        }
+
+        return [$this->map_genres_to_movies($data['results']), (int) $data['total_pages']];
     }
 
     // A helper function to map genre IDs to genre names for a list of movies
@@ -164,13 +194,13 @@ class NetworkManager
         return $data;
     }
 
-    public function get_trending_movies(): array
+    public function get_trending_movies($numberOfPages = 5): array
     {
 
         $movies = [];
 
         // Fetch trending movies from the first 5 pages
-        for ($i = 1; $i <= 5; $i++) {
+        for ($i = 1; $i <= $numberOfPages; $i++) {
             $response = $this->client->request('GET', "https://api.themoviedb.org/3/movie/popular?language=en-US&page=$i", [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $this->apiKey,
@@ -242,5 +272,17 @@ class NetworkManager
 
         return $banners;
     }
-}
 
+    public function get_genre_names(): array
+    {
+        $genres = [];
+        foreach ($this->genreList as $id => $name) {
+            $genres[] = [
+                'id' => $id,
+                'name' => $name,
+            ];
+        }
+
+        return $genres;
+    }
+}
