@@ -147,7 +147,7 @@ Option 1 (XAMPP / MAMP):
 * Open:
 
 ```
-http://localhost/demo
+http://localhost/Cineverse/Views/index.php
 ```
 
 Option 2 (PHP built-in server):
